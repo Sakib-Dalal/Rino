@@ -1,2 +1,2 @@
-# Rino
+# RIHNO
 ---
