@@ -21,7 +21,7 @@ function Dashboard() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-gray-50">
+        <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-white">
             <h1 className="text-4xl font-black underline">Dashboard</h1>
 
             <p className="font-mono text-lg text-center">

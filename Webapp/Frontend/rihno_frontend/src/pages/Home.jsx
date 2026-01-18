@@ -2,8 +2,16 @@ import React from 'react';
 
 function Home() {
     return (
-        <div>
-            <h1>Welcome to the home!</h1>
+        <div className={"min-h-screen flex flex-col items-center justify-center gap-2"}>
+            <div className={"flex-3"}>
+                Hello
+            </div>
+            <div className={"flex-3"}>
+                Hello
+            </div>
+            <div className={"flex-3"}>
+                Hello
+            </div>
         </div>
     );
 }
