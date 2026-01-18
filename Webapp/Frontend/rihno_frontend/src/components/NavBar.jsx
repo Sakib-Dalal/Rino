@@ -17,9 +17,9 @@ function NavBar() {
 
         // 2. DEFINE CONFIG (Ensure these match your authConfig.js or hardcoded values)
         // We use the imported config if available, or fall back to strings for safety
-        const clientId = cognitoConfig?.client_id || "35ijbep5e36sjm2ju660mr128q";
-        const logoutUri = cognitoConfig?.redirect_uri || "http://localhost:5173/";
-        const cognitoDomain = cognitoConfig?.domain || "https://ap-south-1l7dchhxpa.auth.ap-south-1.amazoncognito.com";
+        const clientId = cognitoConfig?.client_id;
+        const logoutUri = cognitoConfig?.redirect_uri;
+        const cognitoDomain = cognitoConfig?.domain;
 
         // 3. REDIRECT TO COGNITO LOGOUT
         window.location.href =
