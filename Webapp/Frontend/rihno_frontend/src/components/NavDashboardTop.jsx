@@ -6,6 +6,7 @@ import { useAuth } from "react-oidc-context";
 // Import your config if you created the file, otherwise the fallback values below handle it
 import { cognitoConfig } from "../authConfig.js";
 
+
 function NavDashboardTop() {
     const auth = useAuth();
     const signOutRedirect = async () => {
@@ -28,7 +29,7 @@ function NavDashboardTop() {
 
                 <div className="flex items-center gap-2">
                     <img src={logo} alt="logo" className="h-16 w-16 rounded-full" />
-                    <span className="text-2xl font-black underline">RIHNO</span>
+                    <span className="text-2xl font-black underline"><Link to={'/'}>RIHNO</Link></span>
                 </div>
 
                 <div className="flex items-center gap-6 font-bold text-lg">
