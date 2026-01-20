@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
     Server, Database, User, Activity, LineChart,
-    Bell, Settings, Sparkles, UserCircle
+    Bell, Settings, Sparkles, UserCircle, MapIcon, NetworkIcon, LucideSparkles
 } from 'lucide-react';
 
 function NavDashboardBottom() {
@@ -16,23 +16,21 @@ function NavDashboardBottom() {
                 {/* 1. SERVERS LINK */}
                 <DockIcon to="/dashboard/servers" icon={<Server size={24} />} label="Servers" />
 
-                {/* 2. DATA LINK */}
+                {/* 2. MAP LINK */}
                 <DockIcon to="/dashboard/data" icon={<Database size={24} />} label="Data" />
 
-                <div className="w-[2px] h-8 bg-black mx-1 opacity-20"></div>
-
-                <DockIcon to="/dashboard/user" icon={<User size={24} />} label="User" />
-                <DockIcon to="/dashboard/profile" icon={<UserCircle size={24} />} label="Profile" />
-
-                <div className="w-[2px] h-8 bg-black mx-1 opacity-20"></div>
-
                 <DockIcon to="/dashboard/activity" icon={<Activity size={24} />} label="Activity" />
+
+                <div className="w-[2px] h-8 bg-black mx-1 opacity-20"></div>
+
                 <DockIcon to="/dashboard/analytics" icon={<LineChart size={24} />} label="Analytics" />
+                <DockIcon to="/dashboard/analytics" icon={<NetworkIcon size={24} />} label="Network Map" />
+                <DockIcon to="/dashboard/analytics" icon={<Sparkles size={24} />} label="A.I." />
+
 
                 <div className="w-[2px] h-8 bg-black mx-1 opacity-20"></div>
                 <DockIcon to="/dashboard/notify" icon={<Bell size={24} />} label="Notify" />
                 <DockIcon to="/dashboard/config" icon={<Settings size={24} />} label="Config" />
-                <DockIcon to="/dashboard/ai" icon={<Sparkles size={24} />} label="AI" />
 
             </div>
         </div>

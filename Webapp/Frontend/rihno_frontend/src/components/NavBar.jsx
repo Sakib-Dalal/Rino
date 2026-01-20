@@ -2,32 +2,24 @@ import React from 'react';
 import logo from '../assets/rihno.svg';
 import { Link } from 'react-router-dom';
 import { useAuth } from "react-oidc-context";
-// If you created the authConfig file, keep the import.
-// If not, the hardcoded values below will work as a fallback.
 import { cognitoConfig } from "../authConfig.js";
-
 import Button from "./Button";
 
 function NavBar() {
     const auth = useAuth();
 
     const signOutRedirect = async () => {
-        // 1. CLEAR LOCAL TOKENS FIRST
         await auth.removeUser();
-
-        // 2. DEFINE CONFIG (Ensure these match your authConfig.js or hardcoded values)
-        // We use the imported config if available, or fall back to strings for safety
         const clientId = cognitoConfig?.client_id;
         const logoutUri = cognitoConfig?.redirect_uri;
         const cognitoDomain = cognitoConfig?.domain;
-
-        // 3. REDIRECT TO COGNITO LOGOUT
         window.location.href =
             `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logoutUri)}`;
     };
 
     return (
-        <div className="max-w-10xl mx-auto">
+        // ADDED: relative and z-50 to ensure this sits ON TOP of the 3D Canvas
+        <div className="max-w-10xl mx-auto relative z-50">
             <nav className="flex items-center justify-between border-[6px] border-black p-2 pr-6 bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
 
                 <div className="flex items-center gap-2">
@@ -48,20 +40,10 @@ function NavBar() {
                     )}
 
                     {!auth.isAuthenticated ? (
-                        // <button
-                        //     onClick={() => auth.signinRedirect()}
-                        //     className="bg-[#FFECA0] border-[4px] border-black px-6 py-2 font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
-                        //     Login
-                        // </button>
                         <Button func={() => auth.signinRedirect()} color={"bg-[#FFECA0]"} label="LOGIN" />
                     ) : (
-                        // <button
-                        //     onClick={signOutRedirect}
-                        //     className="bg-red-300 border-[4px] border-black px-6 py-2 font-black uppercase shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all">
-                        //     Logout
-                        // </button>
                         <Button func={signOutRedirect} color={"bg-red-300"} label="LOGOUT" />
-                )}
+                    )}
                 </div>
             </nav>
         </div>
