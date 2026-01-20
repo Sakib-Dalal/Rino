@@ -26,7 +26,7 @@ function NavBar() {
                 {/* Logo Section */}
                 <div className="flex items-center gap-2">
                     <img src={logo} alt="logo" className="h-10 w-10 md:h-16 md:w-16 rounded-full" />
-                    <span className="text-xl md:text-2xl font-black underline">RIHNO</span>
+                    <Link to={"/"}><span className="text-xl md:text-2xl font-black underline">RIHNO</span></Link>
                 </div>
 
                 {/* Desktop Menu: Hidden on small screens */}

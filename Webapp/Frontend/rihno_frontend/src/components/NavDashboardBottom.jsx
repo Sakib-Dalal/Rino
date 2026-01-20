@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
     Server, Database, User, Activity, LineChart,
-    Bell, Settings, Sparkles, UserCircle, MapIcon, NetworkIcon, LucideSparkles
+    Bell, Settings, Sparkles, UserCircle, MapIcon, NetworkIcon, LucideSparkles, Home
 } from 'lucide-react';
 
 function NavDashboardBottom() {
@@ -32,6 +32,8 @@ function NavDashboardBottom() {
                 <DockIcon to="/dashboard/notify" icon={<Bell size={24} />} label="Notify" />
                 <DockIcon to="/dashboard/config" icon={<Settings size={24} />} label="Config" />
 
+                <div className="w-[2px] h-8 bg-black mx-1 opacity-20"></div>
+                <DockIcon to="/" icon={<Home size={24} />} label="Home" />
             </div>
         </div>
     );

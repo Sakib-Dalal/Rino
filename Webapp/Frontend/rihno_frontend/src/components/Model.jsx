@@ -9,7 +9,7 @@ const Model = () => {
     const scroll = useScroll(); // Access scroll data
     const modelRef = useRef();
 
-    useFrame((state) => {
+    useFrame(() => {
         // r1 is a value from 0 to 1 based on scroll progress
         const r1 = scroll.range(0, 1);
 

@@ -19,7 +19,7 @@ function Home() {
                     </div>
 
                     <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-black leading-tight mb-6 drop-shadow-sm">
-                        <span className={"bg-black text-white px-2"}>SECURE YOUR</span> <br />
+                        <span className={"bg-black text-[#FFA0A2] box-border border-[#FFA0A2] border-6 px-2"}>SECURE YOUR</span> <br />
                         <span className="bg-clip-text text-black">
                             INFRASTRUCTURE
                         </span>
@@ -68,7 +68,7 @@ function Home() {
                         {/* pages={3}: Defines the scrollable height.
                             damping={0.2}: Makes the movement feel smooth and heavy.
                         */}
-                        <ScrollControls pages={1} damping={0.2}>
+                        <ScrollControls pages={2} damping={0.15}>
                             <Model />
                         </ScrollControls>
                     </Suspense>

@@ -34,7 +34,7 @@ function NavDashboardTop() {
 
                 <div className="flex items-center gap-6 font-bold text-lg">
                     <p className="font-mono text-lg text-center bg-black">
-                        <b className="text-xl text-white p-1">{auth.user?.profile?.email}</b>
+                        <span className={"bg-white ml-1 px-2"}>UserName:</span><b className="text-xl text-white p-1">{auth.user?.profile?.email}</b>
                     </p>
 
                     <button
