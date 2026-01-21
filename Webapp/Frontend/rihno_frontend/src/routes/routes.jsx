@@ -11,6 +11,14 @@ import Contact from "../pages/Contact.jsx";
 import Dashboard from "../pages/Dashboard.jsx"; // This is your layout file
 import DashboardHome from "../pages/DashboardHome.jsx";
 import Servers from "../pages/Servers.jsx";
+import Data from "../pages/Data.jsx";
+import Activity from "../pages/Activity.jsx";
+import Analytics from "../pages/Analytics.jsx";
+import NetworkMap from "../pages/NetworkMap.jsx";
+import AI from "../pages/AI.jsx";
+import Notification from "../pages/Notification.jsx";
+import Config from "../pages/Config.jsx";
+
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
 
 export const router = createBrowserRouter([
@@ -40,8 +48,13 @@ export const router = createBrowserRouter([
                     { path: "servers", element: <Servers /> },
 
                     // Placeholders for other buttons:
-                    { path: "data", element: <div className="text-center text-2xl font-black mt-10">DATA PAGE</div> },
-                    { path: "user", element: <div className="text-center text-2xl font-black mt-10">USER PAGE</div> },
+                    { path: "data", element: <Data /> },
+                    { path: "activity", element: <Activity /> },
+                    { path: "analytics", element: <Analytics /> },
+                    { path: "networkmap", element: <NetworkMap /> },
+                    { path: "ai", element: <AI /> },
+                    { path: "notification", element: <Notification /> },
+                    { path: "config", element: <Config /> },
                 ]
             },
         ]

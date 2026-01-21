@@ -1,63 +1,93 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
-    Server, Database, User, Activity, LineChart,
-    Bell, Settings, Sparkles, UserCircle, MapIcon, NetworkIcon, LucideSparkles, Home
+    Server, Database, Activity, LineChart,
+    Bell, Settings, Sparkles, NetworkIcon, Home
 } from 'lucide-react';
 
 function NavDashboardBottom() {
-    // Note: We removed the <main> "Welcome Back" section from here.
-    // It is now moved to DashboardHome.jsx so it doesn't overlap with the Servers page.
-
     return (
-        <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
-            <div className="flex items-center gap-2 px-4 py-3 bg-white border-[3px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
+        <nav
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 w-max max-w-[95vw]"
+            aria-label="Dashboard Navigation"
+        >
+            <div className="flex items-center gap-1 md:gap-2 px-3 py-2 bg-white border-[3px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
 
-                {/* 1. SERVERS LINK */}
+                {/* Core Section */}
                 <DockIcon to="/dashboard/servers" icon={<Server size={24} />} label="Servers" />
-
-                {/* 2. MAP LINK */}
                 <DockIcon to="/dashboard/data" icon={<Database size={24} />} label="Data" />
-
                 <DockIcon to="/dashboard/activity" icon={<Activity size={24} />} label="Activity" />
 
-                <div className="w-[2px] h-8 bg-black mx-1 opacity-20"></div>
+                <Separator />
 
+                {/* Analysis Section */}
                 <DockIcon to="/dashboard/analytics" icon={<LineChart size={24} />} label="Analytics" />
-                <DockIcon to="/dashboard/analytics" icon={<NetworkIcon size={24} />} label="Network Map" />
-                <DockIcon to="/dashboard/analytics" icon={<Sparkles size={24} />} label="A.I." />
+                <DockIcon to="/dashboard/networkmap" icon={<NetworkIcon size={24} />} label="Network" />
+                <DockIcon to="/dashboard/ai" icon={<Sparkles size={24} />} label="A.I." />
 
+                <Separator />
 
-                <div className="w-[2px] h-8 bg-black mx-1 opacity-20"></div>
-                <DockIcon to="/dashboard/notify" icon={<Bell size={24} />} label="Notify" />
+                {/* System Section */}
+                <DockIcon to="/dashboard/notification" icon={<Bell size={24} />} label="Notify" />
                 <DockIcon to="/dashboard/config" icon={<Settings size={24} />} label="Config" />
 
-                <div className="w-[2px] h-8 bg-black mx-1 opacity-20"></div>
+                <Separator />
+
+                {/* Home Link */}
                 <DockIcon to="/" icon={<Home size={24} />} label="Home" />
             </div>
-        </div>
+        </nav>
     );
 }
 
-// Helper: Uses NavLink for active state styling
-const DockIcon = ({ icon, label, to }) => (
-    <div className="group relative flex flex-col items-center justify-center">
-        <span className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white text-xs font-bold py-1 px-2 mb-2 pointer-events-none whitespace-nowrap border-[1px] border-white shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)]">
-            {label}
-        </span>
-        <NavLink
-            to={to}
-            className={({ isActive }) =>
-                `p-2 border-[2px] transition-all hover:-translate-y-1 active:translate-y-0 ` +
-                (isActive
-                        ? "bg-black text-white border-black"
-                        : "bg-transparent border-transparent hover:border-black hover:bg-black hover:text-white"
-                )
-            }
-        >
-            {React.cloneElement(icon, { strokeWidth: 2.5 })}
-        </NavLink>
-    </div>
+const Separator = () => (
+    <div className="w-[2px] h-8 bg-black/20 mx-1 hidden sm:block" aria-hidden="true" />
 );
+
+const DockIcon = ({ icon, label, to }) => {
+    return (
+        <div className="group relative flex flex-col items-center">
+
+            {/* --- HOVER LABEL --- */}
+            <div className="absolute -top-14 scale-0 group-hover:scale-100 group-hover:-translate-y-1 transition-all duration-200 ease-[cubic-bezier(0.34,1.56,0.64,1)] origin-bottom pointer-events-none z-[60]">
+                <div className="bg-black text-white text-[10px] font-black uppercase tracking-[0.15em] px-3 py-1.5 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] whitespace-nowrap">
+                    {label}
+                    {/* Tooltip Arrow */}
+                    <div className="absolute -bottom-[10px] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[8px] border-t-black"></div>
+                </div>
+            </div>
+
+            {/* --- MAIN NAVLINK --- */}
+            <NavLink
+                to={to}
+                className={({ isActive }) => `
+                    relative p-3 transition-all duration-200 ease-in-out
+                    flex items-center justify-center
+                    border-2
+                    ${isActive
+                    ? "bg-black text-white border-black shadow-none -translate-y-1"
+                    : "bg-transparent text-black border-transparent hover:bg-[#FFECA0] hover:border-black hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                }
+                    active:translate-y-0 active:shadow-none
+                `}
+            >
+                {({ isActive }) => (
+                    <>
+                        {/* The Icon */}
+                        {React.cloneElement(icon, {
+                            strokeWidth: isActive ? 3 : 2.5,
+                            className: "relative z-10"
+                        })}
+
+                        {/* Active Indicator (Clean fix for the nested NavLink error) */}
+                        {isActive && (
+                            <div className="absolute -bottom-1.5 w-1.5 h-1.5 bg-white rounded-full border border-black animate-pulse" />
+                        )}
+                    </>
+                )}
+            </NavLink>
+        </div>
+    );
+};
 
 export default NavDashboardBottom;
