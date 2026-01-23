@@ -1,0 +1,12 @@
+{
+  "name": "rihno_backend",
+  "version": "1.0.0",
+  "description": "Backend for RIHNO IDS software.",
+  "license": "ISC",
+  "author": "Sakib",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
