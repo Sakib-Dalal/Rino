@@ -19,7 +19,14 @@ import AI from "../pages/AI.jsx";
 import Notification from "../pages/Notification.jsx";
 import Config from "../pages/Config.jsx";
 
+// config children
+import ListDevices from "../pages/Config_pages/ListDevices.jsx";
+
+
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
+import NewDevices from "../pages/Config_pages/NewDevices.jsx";
+import EditDevices from "../pages/Config_pages/EditDevices.jsx";
+import DeleteDevices from "../pages/Config_pages/DeleteDevices.jsx";
 
 export const router = createBrowserRouter([
     {
@@ -54,7 +61,16 @@ export const router = createBrowserRouter([
                     { path: "networkmap", element: <NetworkMap /> },
                     { path: "ai", element: <AI /> },
                     { path: "notification", element: <Notification /> },
-                    { path: "config", element: <Config /> },
+                    {
+                        path: "config",
+                        element: <Config />,
+                        children: [
+                            { path: "listdevices", element: <ListDevices /> },
+                            { path: "newdevice", element: <NewDevices /> },
+                            { path: "editdevice", element: <EditDevices /> },
+                            { path: "deletedevice", element: <DeleteDevices /> },
+                        ]
+                    },
                 ]
             },
         ]

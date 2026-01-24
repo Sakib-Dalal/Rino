@@ -1,11 +1,21 @@
-import React, { Suspense } from 'react';
+import React, {Suspense, useEffect, useState} from 'react';
 import { Environment, ScrollControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import Model from "../components/Model.jsx";
 import { Link } from 'react-router-dom';
 import { ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import axios from 'axios';
 
 function Home() {
+    // Backend ready
+    const [data, setData] = useState("");
+    // call API
+    useEffect(() => {
+        // call express js api using axios
+        axios.get("http://localhost:5050/api/backend_check")
+            .then(response => {setData(response.data.message);})
+            .catch(error => {console.error("There was an error fetching the data!", error);})
+    }, []);
     return (
         <div className="relative w-full min-h-screen bg-white overflow-hidden flex flex-col">
 
@@ -14,8 +24,8 @@ function Home() {
                 <div className="max-w-2xl pointer-events-auto">
                     {/* Badge */}
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black text-white text-[10px] md:text-xs font-bold tracking-wider mb-4 md:mb-6 border border-gray-800 shadow-md">
-                        <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-                        SYSTEM ONLINE v1.0
+                        <span className={`w-2 h-2 rounded-full animate-pulse ${data ? 'bg-green-400' : 'bg-red-400'}`}></span>
+                        {data ? `SYSTEM ONLINE: ${data}` : "SYSTEM OFFLINE"}
                     </div>
 
                     <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-black leading-tight mb-6 drop-shadow-sm">
