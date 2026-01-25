@@ -34,19 +34,16 @@ const Servers = () => {
         <div className="flex flex-col items-center animate-fade-in-up w-full p-4">
             <div className="mb-12">
                 <h1 className="text-6xl md:text-8xl font-black uppercase leading-none text-center">
-                    RHINO
+                    DEVICE
                     <span className="block md:inline-block bg-[#FFECA0] border-[4px] border-black px-4 ml-0 md:ml-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                         LIST
-                    </span><br />
-                    <span className={"text-2xl lowercase"}>
-                        User: {auth.user?.profile?.email || "Guest"}
                     </span>
                 </h1>
             </div>
 
             <div className="w-full max-w-5xl border-[4px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white p-6">
                 {loading ? (
-                    <p className="text-center font-mono font-bold py-10">LOADING DATA FROM AWS...</p>
+                    <p className="text-center font-mono font-bold py-10">LOADING DEVICE DATA ...</p>
                 ) : (
                     <table className="w-full text-left font-mono border-collapse">
                         <thead>
@@ -54,6 +51,8 @@ const Servers = () => {
                             <th className="p-4 border-[2px] border-black">Device Name</th>
                             <th className="p-4 border-[2px] border-black">Status</th>
                             <th className="p-4 border-[2px] border-black">Location</th>
+                            <th className="p-4 border-[2px] border-black">Device Type</th>
+                            <th className="p-4 border-[2px] border-black">Date Created</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -64,12 +63,18 @@ const Servers = () => {
                                         {server.DeviceName}
                                     </td>
                                     <td className={`p-4 border-[2px] border-black font-black ${
-                                        server.Status === 'ONLINE' ? 'text-green-600' : 'text-red-600'
+                                        server.Status === 'Online' ? 'text-green-600' : 'text-red-600'
                                     }`}>
                                         {server.Status}
                                     </td>
                                     <td className="p-4 border-[2px] border-black">
                                         {server.Location || 'N/A'}
+                                    </td>
+                                    <td className="p-4 border-[2px] border-black">
+                                        {server.DeviceType || 'N/A'}
+                                    </td>
+                                    <td className="p-4 border-[2px] border-black">
+                                        {server.DateCreated || 'N/A'}
                                     </td>
                                 </tr>
                             ))
