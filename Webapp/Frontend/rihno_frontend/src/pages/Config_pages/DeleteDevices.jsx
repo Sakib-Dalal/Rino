@@ -62,7 +62,7 @@ function DeleteDevices() {
 
     return (
         <div className="flex flex-col items-start w-full p-6 font-mono">
-            <h2 className="text-2xl font-mono font-bold mb-6 border-b-2 border-black pb-2">DELETE DEVICES</h2>
+            <h2 className="text-3xl font-black uppercase mb-8 border-b-4 border-black pb-2">Delete Device</h2>
 
             {loading ? (
                 <p>LOADING...</p>

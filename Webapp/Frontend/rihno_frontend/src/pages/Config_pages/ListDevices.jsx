@@ -42,7 +42,7 @@ function ListDevices() {
 
     return (
         <div className="flex flex-col items-start animate-fade-in-up w-full">
-            <h2 className="text-2xl font-mono font-bold mb-6 border-b-2 border-black pb-2">LIST DEVICES</h2>
+            <h2 className="text-3xl font-black uppercase mb-8 border-b-4 border-black pb-2">List Device</h2>
 
             <div className="w-full max-w-5xl bg-white">
                 {loading ? (
