@@ -2,16 +2,17 @@ import React from 'react';
 
 function Analytics() {
     return (
-        /* w-full h-full: Centers within the remaining parent space
-           flex-1: Ensures it grows to fill the available area in a flex container
-        */
-        <div className="w-full h-full bg-black flex flex-col items-center justify-center flex-1">
-            <h1 className="text-[#CEFFBC] text-4xl font-black uppercase">
-                Analytics Dashboard
-            </h1>
-            <p className="text-white font-mono mt-4">
-                System monitoring in progress...
-            </p>
+        <div className="flex flex-col items-center animate-fade-in w-full p-6 min-h-screen bg-white">
+
+            {/* Header Section */}
+            <div className="mb-25">
+                <h1 className="text-6xl md:text-8xl font-black uppercase leading-none text-center">
+                    Analysis
+                    <span className="block md:inline-block bg-[#FFECA0] border-[4px] border-black px-4 ml-0 md:ml-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                        Dashboard
+                    </span>
+                </h1>
+            </div>
         </div>
     );
 }

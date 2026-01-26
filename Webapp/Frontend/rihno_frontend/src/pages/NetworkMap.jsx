@@ -63,40 +63,55 @@ function NetworkMap() {
     };
 
     return (
-        <div style={{ height: '600px', width: '100%', padding: '20px' }}>
-            {/* Dropdown Menu */}
-            <div style={{ marginBottom: '20px' }}>
-                <label htmlFor="device-select">Select Agent: </label>
-                <select
-                    id="device-select"
-                    value={selectedDevice}
-                    onChange={handleChange}
-                    style={{ padding: '5px', borderRadius: '4px' }}
-                >
-                    <option value="device1">EC2 Instance - Prod</option>
-                    <option value="device2">EC2 Instance - Dev</option>
-                    <option value="device3">EC2 Instance - Dev</option>
-                </select>
+        <div className="flex flex-col items-center animate-fade-in w-full p-6 min-h-screen bg-white">
+
+            {/* Header Section */}
+            <div className="mb-25">
+                <h1 className="text-6xl md:text-8xl font-black uppercase leading-none text-center">
+                    Network
+                    <span className="block md:inline-block bg-[#FFECA0] border-[4px] border-black px-4 ml-0 md:ml-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                        Map
+                    </span>
+                </h1>
             </div>
 
-            {/* Network Graph Container */}
-            <div style={{ height: '800px', border: '1px solid #ddd', background: 'white' }}>
-                <ResponsiveNetworkCanvas
-                    data={deviceData[selectedDevice]}
-                    margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
-                    linkDistance={e => e.distance}
-                    centeringStrength={0.3}
-                    repulsivity={6}
-                    nodeColor={e => e.color}
-                    nodeBorderWidth={1}
-                    nodeBorderColor={{ from: 'color', modifiers: [['darker', 0.8]] }}
-                    linkThickness={2}
-                    linkColor="#999"
-                    motionConfig="gentle"
-                />
+            <div style={{ height: '600px', width: '100%', padding: '20px' }}>
+                {/* Dropdown Menu */}
+                <div style={{ marginBottom: '20px' }}>
+                    <label htmlFor="device-select">Select Agent: </label>
+                    <select
+                        id="device-select"
+                        value={selectedDevice}
+                        onChange={handleChange}
+                        style={{ padding: '5px', borderRadius: '4px' }}
+                    >
+                        <option value="device1">EC2 Instance - Prod</option>
+                        <option value="device2">EC2 Instance - Dev</option>
+                        <option value="device3">EC2 Instance - Dev</option>
+                    </select>
+                </div>
+
+                {/* Network Graph Container */}
+                <div style={{ height: '800px', border: '1px solid #ddd', background: 'white' }}>
+                    <ResponsiveNetworkCanvas
+                        data={deviceData[selectedDevice]}
+                        margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+                        linkDistance={e => e.distance}
+                        centeringStrength={0.3}
+                        repulsivity={6}
+                        nodeColor={e => e.color}
+                        nodeBorderWidth={1}
+                        nodeBorderColor={{ from: 'color', modifiers: [['darker', 0.8]] }}
+                        linkThickness={2}
+                        linkColor="#999"
+                        motionConfig="gentle"
+                    />
+                </div>
             </div>
+
         </div>
     );
+
 }
 
 export default NetworkMap;
