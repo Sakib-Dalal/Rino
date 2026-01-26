@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "react-oidc-context";
 import axios from 'axios';
+import { backendConfig } from "../authConfig.js";
 
 const Servers = () => {
     const auth = useAuth();
     const [servers, setServers] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // 1. Fetch data from your local Node.js backend
+    // Fetch data from your local Node.js backend
     useEffect(() => {
         const fetchDevices = async () => {
             const email = auth.user?.profile?.email;
@@ -16,7 +17,7 @@ const Servers = () => {
 
             try {
                 setLoading(true);
-                const response = await axios.get('http://localhost:5050/api/list_all_devices', {
+                const response = await axios.get(`${backendConfig.backendURL}api/list_all_devices`, {
                     params: { email: email }
                 });
                 setServers(response.data);
@@ -26,7 +27,6 @@ const Servers = () => {
                 setLoading(false);
             }
         };
-
         fetchDevices();
     }, [auth.user?.profile?.email]); // Re-run if email changes or loads
 
@@ -47,7 +47,7 @@ const Servers = () => {
                 ) : (
                     <table className="w-full text-left font-mono border-collapse">
                         <thead>
-                        <tr className="bg-black text-white">
+                        <tr className="bg-gray-300 text-black">
                             <th className="p-4 border-[2px] border-black">Device Name</th>
                             <th className="p-4 border-[2px] border-black">Status</th>
                             <th className="p-4 border-[2px] border-black">Location</th>
@@ -58,7 +58,7 @@ const Servers = () => {
                         <tbody>
                         {servers.length > 0 ? (
                             servers.map((server, index) => (
-                                <tr key={index} className="hover:bg-yellow-100 transition-colors">
+                                <tr key={index} className="hover:bg-black hover:text-white transition-colors">
                                     <td className="p-4 border-[2px] border-black font-bold">
                                         {server.DeviceName}
                                     </td>
@@ -80,7 +80,7 @@ const Servers = () => {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="3" className="p-4 text-center border-[2px] border-black">
+                                <td colSpan="5" className="p-4 text-center border-[2px] border-black">
                                     No devices found.
                                 </td>
                             </tr>

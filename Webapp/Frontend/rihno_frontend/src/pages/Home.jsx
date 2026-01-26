@@ -4,25 +4,26 @@ import { Canvas } from "@react-three/fiber";
 import Model from "../components/Model.jsx";
 import { Link } from 'react-router-dom';
 import { ArrowRight, ShieldCheck, Zap } from 'lucide-react';
+import { backendConfig } from "../authConfig.js";
 import axios from 'axios';
 
 function Home() {
-    // Backend ready
+    // Check backend (node.js) is ready
     const [data, setData] = useState("");
-    // call API
+    // Call the backend API and update the status
     useEffect(() => {
         // call express js api using axios
-        axios.get("http://localhost:5050/api/backend_check")
+        axios.get(`${backendConfig.backendURL}api/backend_check`)
             .then(response => {setData(response.data.message);})
             .catch(error => {console.error("There was an error fetching the data!", error);})
     }, []);
+
+    // Return the Home page
     return (
         <div className="relative w-full min-h-screen bg-white overflow-hidden flex flex-col">
-
-            {/* --- 1. UI LAYER --- */}
             <div className="relative lg:absolute inset-0 z-10 container mx-auto px-6 flex items-center pt-24 pb-12 lg:pb-32 pointer-events-none">
                 <div className="max-w-2xl pointer-events-auto">
-                    {/* Badge */}
+
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black text-white text-[10px] md:text-xs font-bold tracking-wider mb-4 md:mb-6 border border-gray-800 shadow-md">
                         <span className={`w-2 h-2 rounded-full animate-pulse ${data ? 'bg-green-400' : 'bg-red-400'}`}></span>
                         {data ? `SYSTEM ONLINE: ${data}` : "SYSTEM OFFLINE"}
@@ -67,7 +68,7 @@ function Home() {
                 </div>
             </div>
 
-            {/* --- 2. 3D SCENE --- */}
+            {/* --- 3D SCENE --- */}
             <div className="absolute inset-0 z-0 h-full">
                 <Canvas camera={{ position: [0, 0, 5], fov: 40 }}>
                     <ambientLight intensity={0.7} />

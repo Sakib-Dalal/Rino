@@ -95,4 +95,34 @@ app.get('/api/list_all_devices', async (req, res) => {
     }
 });
 
+// Delete device route
+app.delete('/api/delete', async (req, res) => {
+    try {
+        const { email, device } = req.query;
+
+        // Double-check URL existence to prevent axios crash
+        if (!AWS_API_URL) {
+            return res.status(500).json({ error: "Backend configuration missing: AWS URL" });
+        }
+
+        if (!email) {
+            return res.status(400).json({ status: 'error', message: 'Email required' });
+        }
+
+        const response = await axios.delete(AWS_API_URL, {
+            params: { email: email , device: device },
+        })
+
+        res.status(200).json(response.data);
+
+    } catch (error) {
+        // Log detailed error for you, send clean error to frontend
+        console.error("Axios Error:", error.response?.data || error.message);
+        res.status(error.response?.status || 500).json({
+            message: 'Failed to fetch from AWS',
+            details: error.message
+        });
+    }
+})
+
 app.listen(PORT, () => console.log(`RIHNO backend started on http://localhost:${PORT}`));

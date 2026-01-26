@@ -3,7 +3,7 @@ import { Environment, ScrollControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import Model from "../components/Model.jsx";
 import { Link } from 'react-router-dom';
-import { ArrowRight, Terminal } from 'lucide-react';
+import { Terminal } from 'lucide-react';
 
 function DashboardHome() {
     return (

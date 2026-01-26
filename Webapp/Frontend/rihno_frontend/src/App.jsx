@@ -9,7 +9,7 @@ function App() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // NEW: Automatically redirect to dashboard if logged in and currently on the home page
+    // Automatically redirect to dashboard if logged in and currently on the home page
     useEffect(() => {
         if (auth.isAuthenticated && location.pathname === "/") {
             navigate("/dashboard");

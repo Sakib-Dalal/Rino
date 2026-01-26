@@ -19,7 +19,7 @@ function Config() {
     return (
         <div className="flex flex-col pt-10 px-4 max-w-4xl mx-auto">
             {/* Header Section */}
-            <div className="mb-12">
+            <div className="mb-25">
                 <h1 className="text-6xl md:text-8xl font-black uppercase leading-none text-center">
                     RHINO
                     <span className="block md:inline-block bg-[#7EA0FD] border-[4px] border-black px-4 ml-0 md:ml-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
@@ -38,7 +38,7 @@ function Config() {
                                 to={item.path}
                                 className="group flex items-center justify-between p-8 bg-white text-black transition-all duration-200 hover:bg-black hover:text-white"
                             >
-                            <span className="text-3xl tracking-tighter font-mono">
+                            <span className="text-xl uppercase  tracking-tighter font-mono">
                                 {item.label}
                             </span>
                                 <div className="p-2 transition-colors">
@@ -50,7 +50,6 @@ function Config() {
                     ))}
                 </div>
             ) : (
-                /* Sub-page Container */
                 <div className="flex flex-col animate-in fade-in slide-in-from-bottom-2 duration-300">
                     <button
                         onClick={() => navigate("/dashboard/config")}
