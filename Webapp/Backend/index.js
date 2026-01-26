@@ -125,4 +125,10 @@ app.delete('/api/delete', async (req, res) => {
     }
 })
 
+// Add new device
+app.post('/api/create', async (req, res) => {
+    
+})
+
+
 app.listen(PORT, () => console.log(`RIHNO backend started on http://localhost:${PORT}`));
