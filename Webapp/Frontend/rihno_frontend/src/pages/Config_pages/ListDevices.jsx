@@ -1,19 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from "react-oidc-context";
 import axios from "axios";
+import {
+    Loader2,
+    Copy,
+    CheckCircle2,
+    Key,
+    Monitor,
+    Search,
+    Filter
+} from 'lucide-react';
 import { backendConfig } from "../../authConfig.js";
 
 function ListDevices() {
     const auth = useAuth();
     const [servers, setServers] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [copiedId, setCopiedId] = useState(null); // Tracks which key was just copied
+    const [copiedId, setCopiedId] = useState(null);
+
+    // Filter States
+    const [searchTerm, setSearchTerm] = useState("");
+    const [statusFilter, setStatusFilter] = useState("All");
 
     useEffect(() => {
         const fetchDevices = async () => {
             const email = auth.user?.profile?.email;
             if (!email) return;
-
             try {
                 setLoading(true);
                 const response = await axios.get(`${backendConfig.backendURL}api/list_all_devices`, {
@@ -29,93 +41,105 @@ function ListDevices() {
         fetchDevices();
     }, [auth.user?.profile?.email]);
 
-    // Function to handle the copy logic
-    const handleCopy = (apiKey, deviceId) => {
-        if (!apiKey) return;
+    // Filtering Logic
+    const filteredServers = servers.filter(server => {
+        const matchesSearch = server.DeviceName.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesStatus = statusFilter === "All" || server.Status === statusFilter;
+        return matchesSearch && matchesStatus;
+    });
 
+    const handleCopy = (apiKey, index) => {
+        if (!apiKey) return;
         navigator.clipboard.writeText(apiKey).then(() => {
-            setCopiedId(deviceId);
-            // Reset the "Copied!" message after 2 seconds
+            setCopiedId(index);
             setTimeout(() => setCopiedId(null), 2000);
         });
     };
 
     return (
-        <div className="flex flex-col items-start animate-fade-in-up w-full">
-            <h2 className="text-3xl font-black uppercase mb-8 border-b-4 border-black pb-2">List Device</h2>
+        <div className="max-w-4xl mx-auto p-6 animate-fade-in bg-white min-h-screen">
+            <h2 className="text-3xl font-black uppercase mb-8 border-b-4 border-black pb-2 text-black">List Devices</h2>
 
-            <div className="w-full max-w-5xl bg-white">
-                {loading ? (
-                    <p className="text-center font-mono font-bold py-10">LOADING DEVICE DATA ...</p>
-                ) : (
-                    <table className="w-full text-left font-mono border-collapse">
-                        <thead>
-                        <tr className="bg-gray-300 text-black">
-                            <th className="p-4 border-[2px] border-black">Device Name</th>
-                            <th className="p-4 border-[2px] border-black">Status</th>
-                            <th className="p-4 border-[2px] border-black">Location</th>
-                            <th className="p-4 border-[2px] border-black">Device Type</th>
-                            <th className="p-4 border-[2px] border-black">Date Created</th>
-                            <th className="p-4 border-[2px] border-black">Device API</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {servers.length > 0 ? (
-                            servers.map((server, index) => (
-                                <tr key={index} className="hover:bg-gray-50 transition-colors">
-                                    <td className="p-4 border-[2px] border-black font-bold">
-                                        {server.DeviceName}
-                                    </td>
-                                    <td className={`p-4 border-[2px] border-black font-black ${
-                                        server.Status === 'Online' ? 'text-green-600' : 'text-red-600'
+
+            {/* --- FILTER BAR --- */}
+            <div className="flex flex-col md:flex-row gap-4 mb-10">
+                <div className="relative flex-grow">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black" size={20} />
+                    <input
+                        type="text"
+                        placeholder="SEARCH INVENTORY..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full pl-12 pr-4 py-4 border-4 border-black font-mono font-bold uppercase outline-none focus:bg-yellow-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+                    />
+                </div>
+                <div className="relative">
+                    <Filter className="absolute left-4 top-1/2 -translate-y-1/2 text-black pointer-events-none" size={20} />
+                    <select
+                        value={statusFilter}
+                        onChange={(e) => setStatusFilter(e.target.value)}
+                        className="appearance-none pl-12 pr-10 py-4 border-4 border-black font-mono font-black uppercase outline-none bg-white cursor-pointer shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] focus:bg-[#7EA0FD] focus:text-white transition-all"
+                    >
+                        <option value="All">All Status</option>
+                        <option value="Online">Online</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Offline">Offline</option>
+                    </select>
+                </div>
+            </div>
+
+            {loading ? (
+                <div className="flex items-center gap-4 p-12 border-4 border-dashed border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
+                    <Loader2 className="animate-spin text-black" size={32} />
+                    <p className="font-mono font-black uppercase tracking-tighter text-xl text-black">Scanning Frequency...</p>
+                </div>
+            ) : filteredServers.length > 0 ? (
+                <div className="space-y-6">
+                    {filteredServers.map((server, index) => (
+                        <div
+                            key={index}
+                            className="flex flex-col md:flex-row md:items-center justify-between p-6 border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
+                        >
+                            {/* Device Identification */}
+                            <div className="mb-4 md:mb-0">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <h3 className="text-2xl font-black uppercase leading-none text-black">{server.DeviceName}</h3>
+                                    <span className={`px-3 py-1 border-2 border-black text-[10px] font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
+                                        server.Status === 'Online' ? 'bg-[#CEFFBC] text-black' :
+                                            server.Status === 'Maintenance' ? 'bg-[#7EA0FD] text-white' : 'bg-[#FF6B6B] text-white'
                                     }`}>
                                         {server.Status}
-                                    </td>
-                                    <td className="p-4 border-[2px] border-black">
-                                        {server.Location || 'N/A'}
-                                    </td>
-                                    <td className="p-4 border-[2px] border-black">
-                                        {server.DeviceType || 'N/A'}
-                                    </td>
-                                    <td className="p-4 border-[2px] border-black">
-                                        {server.DateCreated || 'N/A'}
-                                    </td>
-                                    <td className="p-4 border-[2px] border-black">
-                                        <button
-                                            onClick={() => handleCopy(server.DeviceAPI, index)}
-                                            className="flex items-center gap-2 px-2 py-1 bg-gray-100 border border-gray-400 rounded hover:bg-black hover:text-white transition-all group"
-                                            title="Click to copy API Key"
-                                        >
-                                                <span className="text-xs">
-                                                    {copiedId === index ? (
-                                                        <span className="text-green-600 font-bold">COPIED!</span>
-                                                    ) : (
-                                                        <span>
-                                                            {/* Shows first 4 chars then dots */}
-                                                            {server.DeviceAPI ? `${server.DeviceAPI.substring(0, 4)}••••••••` : 'N/A'}
-                                                        </span>
-                                                    )}
-                                                </span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="ContentCopy" />
-                                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="6" className="p-4 text-center border-[2px] border-black">
-                                    No devices found.
-                                </td>
-                            </tr>
-                        )}
-                        </tbody>
-                    </table>
-                )}
-            </div>
+                                    </span>
+                                </div>
+                                <div className="font-mono text-xs font-bold text-gray-400 uppercase tracking-tight">
+                                    {server.Location || 'Unknown'} // {server.DeviceType || 'Generic'} // {server.DateCreated || 'N/A'}
+                                </div>
+                            </div>
+
+                            {/* Utility Actions */}
+                            <div className="flex items-center gap-4 border-t-2 border-black md:border-none pt-4 md:pt-0">
+                                <button
+                                    onClick={() => handleCopy(server.DeviceAPI, index)}
+                                    className={`flex items-center gap-2 px-6 py-3 border-2 border-black font-black uppercase text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1 transition-all ${
+                                        copiedId === index ? 'bg-[#CEFFBC] text-black' : 'bg-[#FFECA0] text-black hover:bg-black hover:text-white'
+                                    }`}
+                                >
+                                    {copiedId === index ? (
+                                        <><CheckCircle2 size={18} /> Copied</>
+                                    ) : (
+                                        <><Key size={18} /> API Key</>
+                                    )}
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div className="p-16 border-4 border-black bg-white shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] text-center">
+                    <Monitor className="mx-auto mb-4 opacity-10 text-black" size={64} />
+                    <p className="font-black uppercase text-2xl text-gray-300 italic">No nodes match your search.</p>
+                </div>
+            )}
         </div>
     );
 }

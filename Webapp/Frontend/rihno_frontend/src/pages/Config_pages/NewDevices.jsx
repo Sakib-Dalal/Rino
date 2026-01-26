@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useAuth } from "react-oidc-context"; // Import OIDC hook
-import { Loader2, CheckCircle2, AlertCircle, Copy } from 'lucide-react';
+import { useAuth } from "react-oidc-context";
+import { Loader2, CheckCircle2, AlertCircle, Copy, ShieldAlert } from 'lucide-react';
 
 function NewDevices() {
-    const auth = useAuth(); // Access authentication state
+    const auth = useAuth();
     const userEmail = auth.user?.profile?.email || '';
 
     const [formData, setFormData] = useState({
@@ -15,18 +15,20 @@ function NewDevices() {
         deviceStatus: 'Online'
     });
 
-    // Update email in state if it changes or loads after initial render
+    const [loading, setLoading] = useState(false);
+    const [status, setStatus] = useState({ type: '', message: '', apiKey: '' });
+
+    // Sync email from OIDC context once authenticated
     useEffect(() => {
         if (userEmail) {
             setFormData(prev => ({ ...prev, email: userEmail }));
         }
     }, [userEmail]);
 
-    const [loading, setLoading] = useState(false);
-    const [status, setStatus] = useState({ type: '', message: '', apiKey: '' });
-
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
+        // Clear error message when user starts typing a new name
+        if (status.type === 'error') setStatus({ type: '', message: '', apiKey: '' });
     };
 
     const handleSubmit = async (e) => {
@@ -37,7 +39,7 @@ function NewDevices() {
         try {
             const dateCreated = new Date().toLocaleDateString('en-GB');
 
-            // Send request to your Node.js backend
+            // POST to your Node.js backend
             const response = await axios.post(`http://localhost:5050/api/create`, null, {
                 params: {
                     ...formData,
@@ -47,20 +49,27 @@ function NewDevices() {
 
             setStatus({
                 type: 'success',
-                message: 'Device Created Successfully!',
+                message: 'Device Registered Successfully!',
                 apiKey: response.data.generatedKey
             });
         } catch (error) {
-            setStatus({
-                type: 'error',
-                message: error.response?.data?.message || 'Failed to connect to backend'
-            });
+            // Logic for "Device Already Taken" (HTTP 409)
+            if (error.response?.status === 409) {
+                setStatus({
+                    type: 'error',
+                    message: 'DEVICE NAME TAKEN: This name is already registered to your account.'
+                });
+            } else {
+                setStatus({
+                    type: 'error',
+                    message: error.response?.data?.message || 'Failed to connect to RHINO backend'
+                });
+            }
         } finally {
             setLoading(false);
         }
     };
 
-    // Show loading state if OIDC is still processing
     if (auth.isLoading) {
         return (
             <div className="flex justify-center items-center h-64">
@@ -75,20 +84,18 @@ function NewDevices() {
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Email Input - Read Only since it's from OIDC */}
+                    {/* Authenticated Email (Read Only) */}
                     <div className="flex flex-col gap-2">
-                        <label className="font-mono uppercase text-sm font-bold text-gray-500">Authenticated Email</label>
+                        <label className="font-mono uppercase text-sm font-bold text-gray-500">User Account</label>
                         <input
                             readOnly
                             type="email"
-                            name="email"
                             value={formData.email}
-                            className="p-3 border-2 border-gray-200 bg-gray-50 cursor-not-allowed outline-none font-bold"
-                            placeholder="Not logged in..."
+                            className="p-3 border-2 border-gray-200 bg-gray-50 cursor-not-allowed outline-none font-bold italic"
                         />
                     </div>
 
-                    {/* Device Name */}
+                    {/* Device Name - Highlighting red if taken */}
                     <div className="flex flex-col gap-2">
                         <label className="font-mono uppercase text-sm font-bold">Device Name</label>
                         <input
@@ -97,12 +104,15 @@ function NewDevices() {
                             name="deviceName"
                             value={formData.deviceName}
                             onChange={handleChange}
-                            className="p-3 border-2 border-black focus:bg-yellow-50 outline-none transition-colors"
-                            placeholder="e.g. RHINO-Node-01"
+                            className={`p-3 border-2 outline-none transition-all ${
+                                status.message.includes("TAKEN")
+                                    ? "border-red-500 bg-red-50 animate-shake"
+                                    : "border-black focus:bg-yellow-50"
+                            }`}
+                            placeholder="e.g. RIHNO-Node-01"
                         />
                     </div>
 
-                    {/* Location */}
                     <div className="flex flex-col gap-2">
                         <label className="font-mono uppercase text-sm font-bold">Location</label>
                         <input
@@ -111,12 +121,11 @@ function NewDevices() {
                             name="deviceLocation"
                             value={formData.deviceLocation}
                             onChange={handleChange}
-                            className="p-3 border-2 border-black focus:bg-yellow-50 outline-none transition-colors"
+                            className="p-3 border-2 border-black focus:bg-yellow-50 outline-none"
                             placeholder="e.g. Mumbai, IN"
                         />
                     </div>
 
-                    {/* Device Type */}
                     <div className="flex flex-col gap-2">
                         <label className="font-mono uppercase text-sm font-bold">Device Type</label>
                         <select
@@ -129,7 +138,6 @@ function NewDevices() {
                             <option value="Local Machine">Local Machine</option>
                             <option value="IOT Honeypot">IOT Honeypot</option>
                             <option value="Container">Container</option>
-
                         </select>
                     </div>
                 </div>
@@ -137,31 +145,32 @@ function NewDevices() {
                 <button
                     type="submit"
                     disabled={loading || !auth.isAuthenticated}
-                    className="w-full bg-black text-white p-4 font-black uppercase text-xl hover:bg-[#7EA0FD] hover:text-black transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-[4px_4px_0px_0px_rgba(126,160,253,1)] active:shadow-none active:translate-x-1 active:translate-y-1"
+                    className="w-full bg-black text-white p-4 font-black uppercase text-xl hover:bg-[#CEFFBC] hover:text-black transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:shadow-none active:translate-x-1 active:translate-y-1"
                 >
-                    {loading ? <Loader2 className="animate-spin" /> : 'Generate Device API Key'}
+                    {loading ? <Loader2 className="animate-spin" /> : 'Generate API Key'}
                 </button>
             </form>
 
-            {/* Success/Error State Display */}
+            {/* Notification Area */}
             {status.message && (
                 <div className={`mt-8 p-6 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] ${
-                    status.type === 'success' ? 'bg-[#7EA0FD]' : 'bg-red-400'
+                    status.type === 'success' ? 'bg-[#7EA0FD]' : 'bg-[#FF6B6B]'
                 }`}>
-                    <div className="flex items-center gap-3 mb-2 font-black uppercase italic">
-                        {status.type === 'success' ? <CheckCircle2 /> : <AlertCircle />}
-                        <span>{status.message}</span>
+                    <div className="flex items-center gap-3 mb-2 font-black uppercase">
+                        {status.type === 'success' ? <CheckCircle2 size={28} /> : <ShieldAlert size={28} />}
+                        <span className="text-lg">{status.message}</span>
                     </div>
 
                     {status.apiKey && (
                         <div className="mt-4 p-4 bg-white border-2 border-black">
-                            <p className="text-xs font-mono text-gray-500 uppercase mb-2 font-bold">Save this API Key (It won't be shown again):</p>
+                            <p className="text-[10px] font-mono text-gray-500 uppercase mb-2 font-black">Private API Key (Copy Now):</p>
                             <div className="flex items-center justify-between gap-2">
-                                <code className="break-all font-mono font-black text-lg text-red-600 bg-gray-100 px-2">{status.apiKey}</code>
+                                <code className="break-all font-mono font-black text-sm md:text-lg text-black bg-gray-100 px-2 border border-gray-300">
+                                    {status.apiKey}
+                                </code>
                                 <button
                                     onClick={() => navigator.clipboard.writeText(status.apiKey)}
-                                    className="p-2 border-2 border-black hover:bg-black hover:text-white transition-colors"
-                                    title="Copy to clipboard"
+                                    className="p-2 border-2 border-black bg-yellow-300 hover:bg-black hover:text-white transition-colors shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                                 >
                                     <Copy size={20} />
                                 </button>

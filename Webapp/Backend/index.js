@@ -127,14 +127,10 @@ app.delete('/api/delete', async (req, res) => {
 })
 
 // Add new device
-// Add new device
 app.post('/api/create', async (req, res) => {
-    // 1. Move the helper function outside or keep it here;
-    // but pull the secret from process.env for security.
     function generateAPIKey(email, deviceName) {
         const timestamp = Date.now().toString();
         const secret = process.env.API_SECRET || 'fallback-secret-key';
-
         const seed = `${email}-${deviceName}-${timestamp}`;
         return crypto
             .createHmac('sha256', secret)
@@ -143,10 +139,9 @@ app.post('/api/create', async (req, res) => {
     }
 
     try {
-        // req.query pulls from the URL: ?email=...&deviceName=...
         const { email, deviceName, deviceLocation, deviceStatus, dateCreated, deviceType } = req.query;
 
-        // Validation
+        // 1. Basic Validation
         if (!email || !deviceName || !deviceLocation || !deviceStatus || !dateCreated || !deviceType) {
             return res.status(400).json({ status: 'error', message: 'All Information Required' });
         }
@@ -155,20 +150,28 @@ app.post('/api/create', async (req, res) => {
             return res.status(500).json({ error: "Backend configuration missing: AWS URL" });
         }
 
-        // Generate the key
         const deviceAPI = generateAPIKey(email, deviceName);
 
-        // 2. FIX: Send data as a JSON BODY, not as params
-        // This matches how most AWS POST endpoints expect data
+        // 2. Forward request to AWS
         const response = await axios.post(AWS_API_URL, {
             UserEmail: email,
             DeviceName: deviceName,
             Status: deviceStatus,
             Location: deviceLocation,
             DateCreated: dateCreated,
-            DeviceAPI: deviceAPI, // Fixed typo: DeviveAPI -> DeviceAPI
+            DeviceAPI: deviceAPI,
             DeviceType: deviceType
         });
+
+        // 3. Handle "Already Taken" logic based on AWS response content
+        // Adjust "Device already exists" to match exactly what your AWS Lambda/API returns
+        if (response.data && (response.data.message === "Device already exists" || response.data.error === "Conflict")) {
+            return res.status(409).json({
+                status: 'error',
+                message: 'NAME_TAKEN',
+                details: 'This device name is already registered to your account.'
+            });
+        }
 
         res.status(200).json({
             status: 'success',
@@ -177,9 +180,67 @@ app.post('/api/create', async (req, res) => {
         });
 
     } catch (error) {
+        // 4. Handle errors from Axios (e.g., AWS returns a 400 or 409 status code)
+        const awsError = error.response?.data?.message || "";
+
+        if (error.response?.status === 409 || awsError.includes("already exists")) {
+            return res.status(409).json({
+                status: 'error',
+                message: 'NAME_TAKEN',
+                details: 'This device name is already in use.'
+            });
+        }
+
         console.error("Axios Error:", error.response?.data || error.message);
         res.status(error.response?.status || 500).json({
             message: 'Failed to fetch from AWS',
+            details: error.response?.data || error.message
+        });
+    }
+});
+
+// Edit existing device
+app.patch('/api/update', async (req, res) => {
+    try {
+        // Extracting data from req.body based on your Postman screenshot
+        const { UserEmail, DeviceName, Status, Location } = req.body;
+
+        // 1. Basic Validation
+        if (!UserEmail || !DeviceName) {
+            return res.status(400).json({
+                status: 'error',
+                message: 'UserEmail and DeviceName are required to identify the device.'
+            });
+        }
+
+        // 2. Check for AWS URL configuration
+        if (!AWS_API_URL) {
+            return res.status(500).json({ error: "Backend configuration missing: AWS URL" });
+        }
+
+        // 3. Forward the update to AWS
+        // Note: We send the payload as the body in axios.patch
+        const response = await axios.patch(AWS_API_URL, {
+            UserEmail,
+            DeviceName,
+            Status,
+            Location
+        });
+
+        // 4. Return success response
+        res.status(200).json({
+            status: 'success',
+            message: 'Device updated successfully',
+            awsResponse: response.data
+        });
+
+    } catch (error) {
+        // Log detailed error for the developer
+        console.error("Axios Error:", error.response?.data || error.message);
+
+        // Send a clean error to the client
+        res.status(error.response?.status || 500).json({
+            message: 'Failed to update device on AWS',
             details: error.response?.data || error.message
         });
     }
