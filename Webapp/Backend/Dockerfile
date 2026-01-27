@@ -1,0 +1,14 @@
+FROM node:current-alpine3.23
+
+LABEL authors="sakibdalal"
+
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+EXPOSE 5050
+
+CMD ["node", "index.js"]

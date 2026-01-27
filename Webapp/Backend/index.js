@@ -246,4 +246,4 @@ app.patch('/api/update', async (req, res) => {
     }
 });
 
-app.listen(PORT, () => console.log(`RIHNO backend started on http://localhost:${PORT}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`RIHNO backend started on http://localhost:${PORT}`));
