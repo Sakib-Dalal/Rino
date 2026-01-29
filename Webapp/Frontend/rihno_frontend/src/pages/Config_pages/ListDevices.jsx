@@ -103,7 +103,7 @@ function ListDevices() {
                             {/* Device Identification */}
                             <div className="mb-4 md:mb-0">
                                 <div className="flex items-center gap-3 mb-3">
-                                    <h3 className="text-2xl font-black uppercase leading-none text-black">{server.DeviceName}</h3>
+                                    <h3 className="text-2xl font-black leading-none text-black">{server.DeviceName}</h3>
                                     <span className={`px-3 py-1 border-2 border-black text-[10px] font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] ${
                                         server.Status === 'Online' ? 'bg-[#CEFFBC] text-black' :
                                             server.Status === 'Maintenance' ? 'bg-[#7EA0FD] text-white' : 'bg-[#FF6B6B] text-white'

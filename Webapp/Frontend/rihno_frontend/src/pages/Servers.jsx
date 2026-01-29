@@ -98,7 +98,7 @@ const Servers = () => {
                                 className="p-6 border-4 border-black bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
                             >
                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                                    <h3 className="text-3xl font-black uppercase leading-none text-black">
+                                    <h3 className="text-3xl font-black leading-none text-black">
                                         {server.DeviceName}
                                     </h3>
                                     <span className={`inline-block px-3 py-1 border-2 border-black text-[10px] font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-center w-fit ${
