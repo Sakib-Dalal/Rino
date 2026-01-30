@@ -44,7 +44,27 @@ function DeleteDevices() {
     const handleDelete = async (deviceName) => {
         const confirmed = window.confirm(`DANGER: Are you sure you want to delete ${deviceName}?`);
         if (!confirmed) return;
-        // ... (handleDelete logic remains same)
+
+        try {
+            setIsProcessing(true);
+            await axios.delete(`${backendConfig.backendURL}api/delete`, {
+                params: {
+                    email: email,
+                    device: deviceName
+                }
+            });
+
+            // Update UI by filtering out the deleted device
+            setDevices(prevDevices =>
+                prevDevices.filter(dev => dev.DeviceName !== deviceName)
+            );
+
+        } catch (error) {
+            console.error("Deletion failed:", error);
+            alert("Error: Could not reach the recovery server.");
+        } finally {
+            setIsProcessing(false);
+        }
     };
 
     return (
