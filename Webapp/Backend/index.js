@@ -3,6 +3,7 @@ import cors from 'cors';
 import axios from 'axios';
 import dotenv from 'dotenv';
 import * as crypto from "node:crypto";
+import { Kafka } from 'kafkajs';
 
 // 1. CRITICAL: Initialize dotenv at the VERY TOP
 dotenv.config();
@@ -63,6 +64,59 @@ app.get('/api/cli_auth', async (req, res) => {
         });
     }
 })
+
+// IMPORTANT: This middleware is required to parse JSON bodies
+app.use(express.json());
+
+const kafka = new Kafka({
+    clientId: 'my-app',
+    brokers: ['localhost:9092'] // Replace with your broker address
+});
+
+const producer = kafka.producer();
+
+// kafka producer cli
+app.post('/api/cli/produce_data', async (req, res) => {
+    try {
+        // 1. Change req.query to req.body to catch the JSON you provided
+        const data = req.body;
+
+        console.log("Received data:", data["CONFIG"]["isAuth"]);
+
+        let isAuth = data["CONFIG"]["isAuth"] || "false";
+        if (isAuth === "false") {
+            res.status(400).json({
+                status: 'error',
+                message: 'Authentication Error',
+                details: data["CONFIG"]["isAuth"]
+            })
+        } else {
+            // 2. Connect and Send to Kafka
+            await producer.connect();
+            await producer.send({
+                topic: 'rihno_logs',
+                messages: [
+                    { value: JSON.stringify(data) },
+                ],
+            });
+
+            res.status(200).json({
+                status: "Success",
+                message: "Data sent to Kafka",
+                sentData: data
+            });
+        }
+
+
+    } catch (error) {
+        console.error("Kafka Producer Error:", error.message);
+        res.status(500).json({
+            message: 'Failed to produce to Kafka',
+            details: error.message
+        });
+    }
+});
+
 
 
 // ---------------------------------------------------------------------------------- FRONTEND PART
