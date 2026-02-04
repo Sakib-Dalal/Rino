@@ -40,17 +40,17 @@ app.get('/api/backend_check', (req, res) => {
 // ---------------------------------------------------------------------------------- CLI PART
 app.get('/api/cli_auth', async (req, res) => {
     try {
-        const { email, device, api_key } = req.query;
+        const { email, device_name, device_type, api_key } = req.query;
         if (!AWS_API_CLI_AUTH_URL) {
             return res.status(500).json({ error: "Backend configuration missing: AWS URL" });
         }
 
-        if (!email || !device || !api_key) {
+        if (!email || !device_name || !device_type || !api_key) {
             return res.status(400).json({ status: 'error', message: 'Email and device is required' });
         }
 
         const response = await axios.get(AWS_API_CLI_AUTH_URL, {
-            params: { email: email, device: device, api_key: api_key },
+            params: { email: email, device_name: device_name, device_type:device_type, api_key: api_key },
         });
 
         res.status(200).json(response.data);
