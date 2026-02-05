@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from "react-oidc-context";
 import { Loader2, CheckCircle2, AlertCircle, Copy, ShieldAlert } from 'lucide-react';
+import {backendConfig} from "../../authConfig.js";
 
 function NewDevices() {
     const auth = useAuth();
@@ -40,7 +41,7 @@ function NewDevices() {
             const dateCreated = new Date().toLocaleDateString('en-GB');
 
             // POST to your Node.js backend
-            const response = await axios.post(`http://localhost:5050/api/create`, null, {
+            const response = await axios.post(`${backendConfig.backendURL}api/create`, null, {
                 params: {
                     ...formData,
                     dateCreated: dateCreated
