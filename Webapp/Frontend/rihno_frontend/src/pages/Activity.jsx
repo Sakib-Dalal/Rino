@@ -7,7 +7,7 @@ function Activity() {
             {/* Header Section */}
             <div className="mb-25">
                 <h1 className="text-6xl md:text-8xl font-black uppercase leading-none text-center">
-                    Device
+                    Agent
                     <span className="block md:inline-block bg-[#FFECA0] border-[4px] border-black px-4 ml-0 md:ml-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                         Activity
                     </span>

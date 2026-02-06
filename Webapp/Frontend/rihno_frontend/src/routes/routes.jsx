@@ -20,13 +20,13 @@ import Notification from "../pages/Notification.jsx";
 import Config from "../pages/Config.jsx";
 
 // config children
-import ListDevices from "../pages/Config_pages/ListDevices.jsx";
+import ListAgents from "../pages/Config_pages/ListAgents.jsx";
 
 
 import ProtectedRoute from "../components/ProtectedRoute.jsx";
-import NewDevices from "../pages/Config_pages/NewDevices.jsx";
-import EditDevices from "../pages/Config_pages/EditDevices.jsx";
-import DeleteDevices from "../pages/Config_pages/DeleteDevices.jsx";
+import NewAgents from "../pages/Config_pages/NewAgents.jsx";
+import EditAgent from "../pages/Config_pages/EditAgent.jsx";
+import DeleteAgent from "../pages/Config_pages/DeleteAgent.jsx";
 
 export const router = createBrowserRouter([
     {
@@ -65,10 +65,10 @@ export const router = createBrowserRouter([
                         path: "config",
                         element: <Config />,
                         children: [
-                            { path: "listdevices", element: <ListDevices /> },
-                            { path: "newdevice", element: <NewDevices /> },
-                            { path: "editdevice", element: <EditDevices /> },
-                            { path: "deletedevice", element: <DeleteDevices /> },
+                            { path: "listdevices", element: <ListAgents /> },
+                            { path: "newdevice", element: <NewAgents /> },
+                            { path: "editdevice", element: <EditAgent /> },
+                            { path: "deletedevice", element: <DeleteAgent /> },
                         ]
                     },
                 ]

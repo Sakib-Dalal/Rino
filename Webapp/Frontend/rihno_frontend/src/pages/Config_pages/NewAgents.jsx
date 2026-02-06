@@ -4,7 +4,7 @@ import { useAuth } from "react-oidc-context";
 import { Loader2, CheckCircle2, AlertCircle, Copy, ShieldAlert } from 'lucide-react';
 import {backendConfig} from "../../authConfig.js";
 
-function NewDevices() {
+function NewAgents() {
     const auth = useAuth();
     const userEmail = auth.user?.profile?.email || '';
 
@@ -50,7 +50,7 @@ function NewDevices() {
 
             setStatus({
                 type: 'success',
-                message: 'Device Registered Successfully!',
+                message: 'Agent Registered Successfully!',
                 apiKey: response.data.generatedKey
             });
         } catch (error) {
@@ -58,7 +58,7 @@ function NewDevices() {
             if (error.response?.status === 409) {
                 setStatus({
                     type: 'error',
-                    message: 'DEVICE NAME TAKEN: This name is already registered to your account.'
+                    message: 'AGENT NAME TAKEN: This name is already registered to your account.'
                 });
             } else {
                 setStatus({
@@ -81,7 +81,7 @@ function NewDevices() {
 
     return (
         <div className="max-w-2xl mx-auto">
-            <h2 className="text-3xl font-black uppercase mb-8 border-b-4 border-black pb-2">Register New Device</h2>
+            <h2 className="text-3xl font-black uppercase mb-8 border-b-4 border-black pb-2">Register New Agent</h2>
 
             <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -98,7 +98,7 @@ function NewDevices() {
 
                     {/* Device Name - Highlighting red if taken */}
                     <div className="flex flex-col gap-2">
-                        <label className="font-mono uppercase text-sm font-bold">Device Name</label>
+                        <label className="font-mono uppercase text-sm font-bold">Agent Name</label>
                         <input
                             required
                             type="text"
@@ -128,7 +128,7 @@ function NewDevices() {
                     </div>
 
                     <div className="flex flex-col gap-2">
-                        <label className="font-mono uppercase text-sm font-bold">Device Type</label>
+                        <label className="font-mono uppercase text-sm font-bold">Agent Type</label>
                         <select
                             name="deviceType"
                             value={formData.deviceType}
@@ -184,4 +184,4 @@ function NewDevices() {
     );
 }
 
-export default NewDevices;
+export default NewAgents;

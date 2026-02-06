@@ -14,7 +14,7 @@ const Servers = () => {
     const [statusFilter, setStatusFilter] = useState("All");
 
     useEffect(() => {
-        const fetchDevices = async () => {
+        const fetchAgents = async () => {
             const email = auth.user?.profile?.email;
             if (!email) return;
 
@@ -25,12 +25,12 @@ const Servers = () => {
                 });
                 setServers(response.data);
             } catch (error) {
-                console.error("Error fetching devices:", error);
+                console.error("Error fetching agents:", error);
             } finally {
                 setLoading(false);
             }
         };
-        fetchDevices();
+        fetchAgents();
     }, [auth.user?.profile?.email]);
 
     // Filtering Logic
@@ -46,7 +46,7 @@ const Servers = () => {
             {/* Header Section */}
             <div className="mb-25">
                 <h1 className="text-6xl md:text-8xl font-black uppercase leading-none text-center">
-                    DEVICE
+                    AGENTS
                     <span className="block md:inline-block bg-[#FFECA0] border-[4px] border-black px-4 ml-0 md:ml-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                         LIST
                     </span>
@@ -60,7 +60,7 @@ const Servers = () => {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black" size={20} />
                     <input
                         type="text"
-                        placeholder="SEARCH BY DEVICE NAME..."
+                        placeholder="SEARCH BY AGENT NAME..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full pl-12 pr-4 py-4 border-4 border-black font-mono font-bold uppercase outline-none focus:bg-yellow-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"

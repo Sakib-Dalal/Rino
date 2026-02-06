@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { backendConfig } from "../../authConfig.js";
 
-function ListDevices() {
+function ListAgents() {
     const auth = useAuth();
     const [servers, setServers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -58,7 +58,7 @@ function ListDevices() {
 
     return (
         <div className="max-w-4xl mx-auto p-6 animate-fade-in bg-white min-h-screen">
-            <h2 className="text-3xl font-black uppercase mb-8 border-b-4 border-black pb-2 text-black">List Devices</h2>
+            <h2 className="text-3xl font-black uppercase mb-8 border-b-4 border-black pb-2 text-black">List Agents</h2>
 
 
             {/* --- FILTER BAR --- */}
@@ -144,4 +144,4 @@ function ListDevices() {
     );
 }
 
-export default ListDevices;
+export default ListAgents;

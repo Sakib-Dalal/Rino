@@ -4,7 +4,7 @@ import axios from "axios";
 import { Loader2, Trash2, Search, Filter, AlertTriangle } from 'lucide-react';
 import { backendConfig } from "../../authConfig.js";
 
-function DeleteDevices() {
+function DeleteAgent() {
     const auth = useAuth();
     const [devices, setDevices] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -25,7 +25,7 @@ function DeleteDevices() {
             });
             setDevices(response.data);
         } catch (error) {
-            console.error("Error fetching devices:", error);
+            console.error("Error fetching agents:", error);
         } finally {
             setLoading(false);
         }
@@ -69,7 +69,7 @@ function DeleteDevices() {
 
     return (
         <div className="max-w-4xl mx-auto animate-fade-in">
-            <h2 className="text-3xl font-black uppercase mb-8 border-b-4 border-black pb-2 text-black">Delete Device</h2>
+            <h2 className="text-3xl font-black uppercase mb-8 border-b-4 border-black pb-2 text-black">Delete Agent</h2>
 
             {/* --- FILTER BAR --- */}
             <div className="flex flex-col md:flex-row gap-4 mb-8">
@@ -77,7 +77,7 @@ function DeleteDevices() {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2" size={18} />
                     <input
                         type="text"
-                        placeholder="SEARCH TARGETS..."
+                        placeholder="SEARCH AGENT..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full pl-12 pr-4 py-3 border-4 border-black font-mono font-bold uppercase outline-none focus:bg-red-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
@@ -101,7 +101,7 @@ function DeleteDevices() {
             {loading ? (
                 <div className="flex flex-col items-center justify-center p-20 border-4 border-dashed border-black">
                     <Loader2 className="animate-spin mb-4" size={40} />
-                    <p className="font-mono font-black uppercase tracking-widest">Loading Targets...</p>
+                    <p className="font-mono font-black uppercase tracking-widest">Loading Agents...</p>
                 </div>
             ) : filteredDevices.length > 0 ? (
                 <div className="grid grid-cols-1 gap-4">
@@ -130,11 +130,11 @@ function DeleteDevices() {
                 </div>
             ) : (
                 <div className="p-10 border-4 border-black bg-gray-50 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] text-center">
-                    <p className="font-black uppercase text-xl">No matching targets found.</p>
+                    <p className="font-black uppercase text-xl">No matching agent found.</p>
                 </div>
             )}
         </div>
     );
 }
 
-export default DeleteDevices;
+export default DeleteAgent;

@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { backendConfig } from "../../authConfig.js";
 
-function EditDevices() {
+function EditAgent() {
     const auth = useAuth();
     const userEmail = auth.user?.profile?.email || '';
 
@@ -87,7 +87,7 @@ function EditDevices() {
                 Status: formData.Status,
                 Location: formData.Location
             });
-            setStatus({ type: 'success', message: 'Device Updated Successfully!' });
+            setStatus({ type: 'success', message: 'Agent Updated Successfully!' });
 
             // Refresh local list
             const updated = devices.map(d =>
@@ -110,7 +110,7 @@ function EditDevices() {
 
     return (
         <div className="max-w-4xl mx-auto animate-fade-in p-4 bg-white min-h-screen">
-            <h2 className="text-3xl font-black uppercase mb-8 border-b-4 border-black pb-2 text-black">Edit Device</h2>
+            <h2 className="text-3xl font-black uppercase mb-8 border-b-4 border-black pb-2 text-black">Edit Agent</h2>
 
 
             {!selectedDevice ? (
@@ -121,7 +121,7 @@ function EditDevices() {
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-black" size={20} />
                             <input
                                 type="text"
-                                placeholder="SEARCH ASSETS..."
+                                placeholder="SEARCH AGENTS..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full pl-12 pr-4 py-4 border-4 border-black font-mono font-bold uppercase outline-none focus:bg-yellow-50 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
@@ -251,4 +251,4 @@ function EditDevices() {
     );
 }
 
-export default EditDevices;
+export default EditAgent;

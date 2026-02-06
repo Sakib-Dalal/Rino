@@ -11,28 +11,28 @@ function Config() {
 
     const menuItems = [
         {
-            label: "List All Devices",
+            label: "List All Agents",
             description: "View and scan active network nodes.",
             icon: <List size={32} />,
             path: "listdevices",
             color: "bg-[#CEFFBC]" // Green
         },
         {
-            label: "Add New Device",
+            label: "Add New Agent",
             description: "Register a new asset to the grid.",
             icon: <Plus size={32} />,
             path: "newdevice",
             color: "bg-[#FFECA0]" // Yellow
         },
         {
-            label: "Edit Device",
+            label: "Edit Agent",
             description: "Modify status and location metadata.",
             icon: <Edit3Icon size={32} />,
             path: "editdevice",
             color: "bg-[#7EA0FD]" // Blue
         },
         {
-            label: "Delete Device",
+            label: "Delete Agent",
             description: "Permanently decommission an asset.",
             icon: <Trash size={32} />,
             path: "deletedevice",
@@ -46,7 +46,7 @@ function Config() {
             {/* Header Section */}
             <div className="mb-25">
                 <h1 className="text-6xl md:text-8xl font-black uppercase leading-none text-center">
-                    RIHNO
+                    AGENT
                     <span className="block md:inline-block bg-[#7EA0FD] border-[4px] border-black px-4 ml-0 md:ml-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                         CONFIG
                     </span>
