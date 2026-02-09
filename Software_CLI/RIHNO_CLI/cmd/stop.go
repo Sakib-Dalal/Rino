@@ -1,27 +1,48 @@
-/*
-Copyright © 2026 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	"strconv"
 
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
 // stopCmd represents the stop command
 var stopCmd = &cobra.Command{
 	Use:   "stop",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Short: color.YellowString("Stop the RIHNO agent"),
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("stop called")
+		pidPath := filepath.Join(os.TempDir(), "rihno.pid")
+
+		// 1. Read the PID from the file
+		data, err := os.ReadFile(pidPath)
+		if err != nil {
+			fmt.Println(color.RedString("RIHNO agent is not running (no PID file found)."))
+			return
+		}
+
+		pid, _ := strconv.Atoi(string(data))
+
+		// 2. Find the process
+		process, err := os.FindProcess(pid)
+		if err != nil {
+			fmt.Printf("Failed to find process: %v\n", err)
+			return
+		}
+
+		// 3. Kill the process
+		err = process.Signal(os.Interrupt) // Send Ctrl+C signal
+		if err != nil {
+			fmt.Printf("Failed to stop process: %v\n", err)
+			return
+		}
+
+		// 4. Clean up the PID file
+		os.Remove(pidPath)
+		fmt.Println(color.GreenString("RIHNO agent (PID %d) stopped successfully.", pid))
 	},
 }
 
