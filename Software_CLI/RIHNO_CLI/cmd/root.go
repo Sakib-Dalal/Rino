@@ -1,51 +1,76 @@
 /*
 Copyright © 2026 NAME HERE <EMAIL ADDRESS>
-
 */
 package cmd
 
 import (
+	"fmt"
 	"os"
 
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
+var (
+	// High-contrast Cyan for the brand name
+	c = color.New(color.FgCyan).Add(color.Bold).SprintFunc()
+	// Bold White for the icon
+	w = color.New(color.FgWhite).Add(color.Bold).SprintFunc()
+	// Dim for the description
+	d = color.New(color.Faint).SprintFunc()
+)
 
+var rhinoIcon = w(`
+           ███████    █████████
+          ████████████████████████
+         ██████████████████████████
+        ███████████████████████████
+       █████████████████████████████
+       █████████████████████████████
+     ████████████████████████████████
+     ████████████████████████████████
+     ████████████████████████████████
+     ████████████████████████████████
+     ████████████████████████████████
+██ ███████████████████████████████████
+██████████████████████████████████████
+████████████████████████████  ███████
+ ███████████  ████████        ███████
+  ██████████  ████████        ███████
+    ███████  █████████        ██████
+     █████   █████████       ███████`)
 
-// rootCmd represents the base command when called without any subcommands
+// Updated ASCII Text to spell RIHNO
+var rihnoText = c(`
+ ██████╗ ██╗██╗  ██╗███╗   ██╗ ██████╗ 
+ ██╔══██╗██║██║  ██║████╗  ██║██╔═══██╗
+ ██████╔╝██║███████║██╔██╗ ██║██║   ██║
+ ██╔══██╗██║██╔══██║██║╚██╗██║██║   ██║
+ ██║  ██║██║██║  ██║██║ ╚████║╚██████╔╝
+ ╚═╝  ╚═╝╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝ ╚═════╝ `)
+
+// Version RIHNO CLI
+const Version = "0.1.0"
+
 var rootCmd = &cobra.Command{
-	Use:   "RIHNO_CLI",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
+	Use:     "rihno",
+	Short:   color.YellowString("AI-Powered Intrusion Detection System"),
+	Version: Version,
+	Long: fmt.Sprintf(`
+%s
+%s
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+%s
+`, rhinoIcon, rihnoText, d("RIHNO is an advanced IDS using AI decision engines to secure your infrastructure.")),
 }
 
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
+	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
 }
 
 func init() {
-	// Here you will define your flags and configuration settings.
-	// Cobra supports persistent flags, which, if defined here,
-	// will be global for your application.
-
-	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.RIHNO_CLI.yaml)")
-
-	// Cobra also supports local flags, which will only run
-	// when this action is called directly.
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// version flag
+	rootCmd.Flags().BoolP("version", "v", false, "Print RIHNO version")
 }
-
-
