@@ -1,40 +1,91 @@
-/*
-Copyright © 2026 NAME HERE <EMAIL ADDRESS>
-
-*/
 package cmd
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
+	"strconv"
+	"syscall"
+	"time"
 
+	"github.com/fatih/color"
+	"github.com/olekukonko/tablewriter"
+	"github.com/olekukonko/tablewriter/renderer"
+	"github.com/olekukonko/tablewriter/tw"
 	"github.com/spf13/cobra"
 )
 
 // statusCmd represents the status command
 var statusCmd = &cobra.Command{
 	Use:   "status",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: color.YellowString("Get the status of RIHNO agent logs and other..."),
+	Run:   getStatus,
+}
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("status called")
-	},
+func getStatus(dmd *cobra.Command, args []string) {
+	pidPath := filepath.Join(os.TempDir(), "rihno.pid")
+
+	// Default values
+	status := color.RedString("Stopped")
+	pidStr := "N/A"
+	uptime := "0s"
+	logsCount := "0"
+
+	data, err := os.ReadFile(pidPath)
+	if err == nil {
+		pidStr = string(data)
+		pid, _ := strconv.Atoi(pidStr)
+
+		// 2. Check if the process is actually running
+		process, err := os.FindProcess(pid)
+		// On Unix, FindProcess always succeeds, so we send signal 0 to check health
+		if err == nil && process.Signal(syscall.Signal(0)) == nil {
+			status = color.GreenString("Running")
+
+			// 3. Calculate approximate logs (Uptime / 2 seconds)
+			fileInfo, err := os.Stat(pidPath)
+			if err == nil {
+				duration := time.Since(fileInfo.ModTime())
+				uptime = duration.Truncate(time.Second).String()
+				// Calculation: 1 log every 2 seconds
+				logsCount = strconv.FormatInt(int64(duration.Seconds()/2), 10)
+			}
+		} else {
+			status = color.YellowString("Zombies/Stale (PID file exists but process dead)")
+		}
+	}
+
+	// 1. Initialize Table using the modern API
+	table := tablewriter.NewTable(os.Stdout,
+		// Using the Rounded style for a professional look
+		tablewriter.WithRenderer(renderer.NewBlueprint(tw.Rendition{
+			Symbols: tw.NewSymbols(tw.StyleRounded),
+		})),
+		tablewriter.WithConfig(tablewriter.Config{
+			Header: tw.CellConfig{
+				Alignment: tw.CellAlignment{Global: tw.AlignCenter},
+			},
+			Row: tw.CellConfig{
+				Alignment: tw.CellAlignment{Global: tw.AlignLeft},
+			},
+		}),
+	)
+
+	// 2. Set Header and Data
+	table.Header([]string{"Metric", "Current Value"})
+
+	table.Append([]string{"Agent Status", status})
+	table.Append([]string{"Process ID", pidStr})
+	table.Append([]string{"Total Uptime", uptime})
+	table.Append([]string{"Logs Recorded", logsCount})
+	table.Append([]string{"Config File", "~/.rihno.yaml"})
+
+	// 3. Render
+	fmt.Println(color.CyanString("\n--- RIHNO AGENT SYSTEM STATUS ---"))
+	table.Render()
+	fmt.Println()
 }
 
 func init() {
 	rootCmd.AddCommand(statusCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// statusCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// statusCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
