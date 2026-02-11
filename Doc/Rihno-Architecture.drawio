@@ -1,6 +1,6 @@
 <mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.6 Chrome/140.0.7339.249 Electron/38.8.0 Safari/537.36" version="29.3.6">
   <diagram name="Page-1" id="C1np2pt7xYJPtnntPySo">
-    <mxGraphModel dx="1311" dy="904" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="-468" dy="-287" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -339,7 +339,7 @@
         <mxCell id="aJuc1lMX0I8gV-vckWy9-121" edge="1" parent="1" source="aJuc1lMX0I8gV-vckWy9-120" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="o6wGrmDIOYiYE7Ctl8l5-1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="aJuc1lMX0I8gV-vckWy9-122" connectable="0" parent="aJuc1lMX0I8gV-vckWy9-121" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;POST&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 16px;&quot;&gt;Agent Logs&lt;/font&gt;&lt;/div&gt;" vertex="1">
+        <mxCell id="aJuc1lMX0I8gV-vckWy9-122" connectable="0" parent="aJuc1lMX0I8gV-vckWy9-121" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" value="&lt;span style=&quot;font-size: 16px;&quot;&gt;TCP :8080&lt;/span&gt;&lt;div&gt;&lt;span style=&quot;font-size: 16px;&quot;&gt;Sockets&lt;/span&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry relative="1" x="-0.1145" y="2" as="geometry">
             <mxPoint y="1" as="offset" />
           </mxGeometry>
