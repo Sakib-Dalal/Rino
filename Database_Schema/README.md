@@ -1,422 +1,415 @@
-# RIHNO Documentation - Complete Package Summary
+# RIHNO Database Schema - Complete Explanation
 
-## 📦 What You've Received
-
-This package contains a complete analysis and fix for your RIHNO security monitoring system database, plus comprehensive documentation for querying metrics by email, device name, and device type.
-
----
-
-## 🐛 BUG FIX DELIVERED
-
-### **Issue**
-Your database was throwing this error:
-```
-ERROR: INSERT has more target columns than expressions (SQLSTATE 42601)
-```
-
-### **Root Cause**
-The `insertMetrics()` function in `main.go` declared 99 columns in the INSERT statement but only provided 97 parameter values ($1-$97). The missing parameters were:
-- `$98` - `m.UniqueOutgoingIPs` (unique_outgoing_ips column)
-- `$99` - `m.LocalIPsCount` (local_ips_count column)
-
-### **Solution Applied**
-✅ **main.go** - Fixed and ready to use
-- Added `$98,$99` to VALUES clause (line 325)
-- Added `m.UniqueOutgoingIPs` and `m.LocalIPsCount` to Exec() call (lines 426-427)
-- All 99 columns now match perfectly with 99 parameters
-
-**File:** `main.go` (corrected version in outputs)
+## Overview
+RIHNO uses TimescaleDB (PostgreSQL extension) for efficient time-series storage. The database tracks host metrics, network connections, and security alerts from distributed agents.
 
 ---
 
-## 📚 DOCUMENTATION SUITE
+## TABLE DESCRIPTIONS
 
-### **1. QUICK_REFERENCE.md** ⚡ START HERE
-- **Best for:** Quick lookups and getting started
-- **Contains:**
-    - Quick start guide to find the right query
-    - Key filters explanation (email, agent_name, agent_type)
-    - Common metrics explained
-    - FAQ and troubleshooting
-    - Query templates and cheat sheets
-- **Read time:** 10 minutes
-- **Use when:** You need a fast answer
+### 1. **rihno_metrics** (Main Metrics Table)
+**Type:** TimescaleDB Hypertable (time-series optimized)  
+**Retention:** 30 days (automatically compressed after 2 days)  
+**Data Frequency:** Every 10 seconds per agent
 
-### **2. SCHEMA_EXPLANATION.md** 📖 UNDERSTAND YOUR DATA
-- **Best for:** Learning what data you have
-- **Contains:**
-    - Detailed explanation of all 7 tables
-    - All 99+ columns described with use cases
-    - Index strategy for performance
-    - Data retention and compression policies
-    - Continuous aggregates (1-min, 1-hour rollups)
-- **Read time:** 30 minutes
-- **Use when:** You're building custom queries
+#### Purpose
+Stores snapshots of 99 host and network metrics from each agent. Each row represents a single agent's metrics at a specific moment in time.
 
-### **3. SQL_QUERIES_GUIDE.md** 🔍 COPY-PASTE READY
-- **Best for:** Ready-to-use SQL queries
-- **Contains:**
-    - 40+ production-ready SQL queries
-    - 11 organized sections:
-        1. Basic single-filter queries
-        2. Time-range queries
-        3. Aggregation & statistics
-        4. Anomaly & security detection
-        5. Alerts & incidents
-        6. Network analysis
-        7. Process analysis
-        8. Disk & I/O analysis
-        9. Fast queries using aggregates
-        10. Inventory & management
-        11. Combined multi-table queries
-    - Export examples (CSV, JSON)
-    - Performance tips
-- **Read time:** Reference document (jump to sections)
-- **Use when:** You need a specific query type
+#### Key Columns
 
-### **4. PRACTICAL_SQL_EXAMPLES.md** 💡 REAL-WORLD SCENARIOS
-- **Best for:** Understanding how to combine filters
-- **Contains:**
-    - 7 realistic scenarios with code:
-        1. Single user, all devices
-        2. Single device, detailed analysis
-        3. Device type analysis (all servers, all workstations)
-        4. Multi-user, multi-device queries
-        5. Time-based comparisons (yesterday vs today)
-        6. Incident investigation workflow
-        7. Reporting queries (daily, monthly, compliance)
-    - Timeline queries for incident response
-    - Find similar incidents across fleet
-    - Optimization tips for combined filters
-- **Read time:** Reference document (jump to scenarios)
-- **Use when:** Solving real-world problems
+**Identity Columns (5):**
+- `time` - Timestamp of the metrics snapshot (TIMESTAMPTZ, NOT NULL)
+- `agent_id` - Unique identifier for the agent (TEXT)
+- `email` - Email of the account owning this agent (TEXT)
+- `agent_name` - Human-readable agent name (TEXT)
+- `agent_type` - Type of agent (e.g., "server", "workstation", "cloud") (TEXT)
 
-### **5. BUG_FIX_SUMMARY.md** ⚠️ TECHNICAL DETAILS
-- **Best for:** Understanding the bug fix
-- **Contains:**
-    - Detailed error analysis
-    - Column count verification
-    - Before/after code comparison
-    - Metrics tracked by the fixed columns
-- **Read time:** 5 minutes
-- **Use when:** You need to understand the fix
+**Process Features (16 columns):**
+- `process_count` - Total number of processes running
+- `process_creation_rate` - New processes spawned per interval
+- `process_termination_rate` - Processes terminated per interval
+- `high_cpu_process_count` - Processes consuming >50% CPU
+- `high_mem_process_count` - Processes consuming >50% memory
+- `avg_process_cpu` - Average CPU % per process
+- `avg_process_memory` - Average memory % per process
+- `avg_process_rss` - Average resident memory size
+- `avg_process_vms` - Average virtual memory size
+- `total_threads` - Sum of all threads across processes
+- `zombie_process_count` - Dead processes not yet reaped
+- `root_process_count` - Processes running as root
+- `avg_process_age_seconds` - Average process uptime
+- `process_with_many_threads` - Processes with >10 threads
+- `suspicious_process_names` - Count of suspicious process names detected
+- `total_file_descriptors` - Total open file handles
 
----
+**System Resources (9 columns):**
+- `system_cpu` - Overall system CPU usage percentage
+- `avg_core_cpu` - Average per-core CPU usage
+- `system_memory_percent` - Overall memory utilization %
+- `system_memory_used` - Memory in use (bytes)
+- `system_memory_available` - Free memory (bytes)
+- `system_memory_total` - Total system memory (bytes)
+- `swap_used_percent` - Swap space utilization %
+- `swap_total` - Total swap available (bytes)
+- `swap_used` - Swap currently in use (bytes)
 
-## 🎯 TABLE OVERVIEW
+**Disk I/O (7 columns):**
+- `disk_read_bytes` - Total bytes read from disk
+- `disk_write_bytes` - Total bytes written to disk
+- `disk_read_rate` - Read speed (bytes/sec)
+- `disk_write_rate` - Write speed (bytes/sec)
+- `disk_read_count` - Number of read operations
+- `disk_write_count` - Number of write operations
+- `disk_io_rate` - Combined I/O rate (bytes/sec)
 
-| Table | Purpose | Rows/Day | Retention | Query Speed |
-|-------|---------|----------|-----------|------------|
-| **rihno_metrics** | Raw metrics (99 columns) | 8,640/agent | 30 days | Medium |
-| **rihno_metrics_1min** | 1-min aggregates | 1,440/agent | 7 days | ⚡ FAST |
-| **rihno_metrics_1hr** | 1-hr aggregates | 24/agent | 365 days | ⚡ FAST |
-| **rihno_connections** | Network connections | ~10k/agent | 7 days | Medium |
-| **rihno_network_maps** | Network topology JSON | 8,640/agent | 7 days | Medium |
-| **rihno_alerts** | Security alerts | Variable | 90 days | Medium |
-| **rihno_agents** | Device registry | Static | Forever | ⚡ FAST |
+**User Sessions (3 columns):**
+- `logged_in_users` - Count of active user sessions
+- `system_uptime` - System uptime in seconds
+- `system_boot_time` - Last boot timestamp
 
----
+**Derived Features (2 columns - spike detection):**
+- `cpu_usage_spike` - CPU change from previous reading (anomaly indicator)
+- `memory_usage_spike` - Memory change from previous reading
 
-## 🔑 THREE MAIN FILTERS
+**Connection States (10 columns):**
+- `total_connections` - Total active connections
+- `tcp_connections` - TCP connections
+- `udp_connections` - UDP connections
+- `established_connections` - ESTABLISHED state connections
+- `listen_connections` - LISTEN state (server listening)
+- `time_wait_connections` - TIME_WAIT state
+- `syn_sent_connections` - SYN_SENT state (suspicious if high)
+- `syn_recv_connections` - SYN_RECV state
+- `close_wait_connections` - CLOSE_WAIT state
+- `fin_wait_connections` - FIN_WAIT state
 
-All queries use combinations of these filters:
+**Network Interface Statistics (12 columns):**
+- `net_bytes_sent` - Total bytes transmitted
+- `net_bytes_recv` - Total bytes received
+- `net_packets_sent` - Packets sent
+- `net_packets_recv` - Packets received
+- `net_errors_in` - Incoming errors
+- `net_errors_out` - Outgoing errors
+- `net_drops_in` - Packets dropped on receive
+- `net_drops_out` - Packets dropped on transmit
+- `net_send_rate` - Upload speed (bytes/sec)
+- `net_recv_rate` - Download speed (bytes/sec)
+- `net_packet_send_rate` - Packets/sec sent
+- `net_packet_recv_rate` - Packets/sec received
 
-### **Filter 1: Email (Account Owner)**
-```sql
-WHERE email = 'john.doe@company.com'
-```
-- Account/owner email address
-- One user can have multiple devices
-- Use to: Show one user all their devices
+**IP Address Features (7 columns):**
+- `unique_source_ips` - Unique local IPs
+- `unique_dest_ips` - Unique remote IPs contacted
+- `new_source_ips` - New IPs since last reading
+- `private_ip_connections` - Connections to private ranges
+- `public_ip_connections` - Connections to public IPs
+- `top_source_ip_count` - Most common source IP count
+- `top_source_ip` - The most frequently used IP
 
-### **Filter 2: Agent Name (Device Name)**
-```sql
-WHERE agent_name = 'LAPTOP-JOHN'
-```
-- Human-readable device identifier
-- Unique within an organization typically
-- Use to: Investigate a specific device
+**Port Features (6 columns):**
+- `unique_local_ports` - Unique listening ports
+- `unique_remote_ports` - Unique remote ports connected to
+- `well_known_port_connections` - Connections on ports <1024
+- `ephemeral_port_connections` - Connections on high ports
+- `suspicious_port_connections` - Connections on known malware ports
+- `port_scan_indicators` - Signs of port scanning activity
 
-### **Filter 3: Agent Type (Device Type)**
-```sql
-WHERE agent_type = 'server'
-```
-- Device category (server, workstation, cloud, etc.)
-- Multiple devices can share same type
-- Use to: Compare across device categories
+**Protocol Distribution (3 columns):**
+- `tcp_ratio` - % of connections that are TCP
+- `udp_ratio` - % of connections that are UDP
+- `tcp_udp_ratio` - TCP:UDP ratio
 
----
+**Process Network Activity (2 columns):**
+- `processes_with_net_activity` - How many processes are networking
+- `avg_connections_per_process` - Average connections per process
 
-## 🚀 QUICK QUERY EXAMPLES
+**Traffic Rates (2 columns):**
+- `connection_creation_rate` - New connections per interval
+- `connection_termination_rate` - Closed connections per interval
 
-### **Get Latest Metrics for a User**
-```sql
-SELECT DISTINCT ON (agent_id)
-    agent_name, agent_type, time, system_cpu, 
-    system_memory_percent, total_connections,
-    port_scanning_score, data_exfiltration_score
-FROM rihno_metrics
-WHERE email = 'user@example.com'
-ORDER BY agent_id, time DESC;
-```
-→ **See:** SQL_QUERIES_GUIDE.md § 1.1
+**Geographic/External (3 columns):**
+- `external_ip_count` - Unique external IPs contacted
+- `loopback_connections` - Connections to 127.x.x.x
+- `broadcast_connections` - Broadcast traffic
 
-### **Find Suspicious Activity in Last 24 Hours**
-```sql
-SELECT agent_name, time, port_scanning_score, 
-       data_exfiltration_score, c2_communication_score,
-       suspicious_port_connections
-FROM rihno_metrics
-WHERE agent_type = 'server'
-  AND time > NOW() - INTERVAL '24 hours'
-  AND (port_scanning_score > 50 
-       OR data_exfiltration_score > 50 
-       OR c2_communication_score > 70)
-ORDER BY time DESC;
-```
-→ **See:** SQL_QUERIES_GUIDE.md § 4.1-4.5
+**Security Scores (7 columns - ML-ready anomaly indicators):**
+- `connection_churn_rate` - (create+terminate) / total (0=stable, 1=chaotic)
+- `connection_density` - connections / processes (higher=more aggressive)
+- `port_scanning_score` - 0-100 probability of port scan activity
+- `data_exfiltration_score` - 0-100 probability of data theft
+- `bandwidth_asymmetry` - 0-1 ratio of send vs receive imbalance
+- `c2_communication_score` - 0-100 probability of C2 beaconing
+- `failed_connection_ratio` - % of connections that failed
 
-### **Security Dashboard (Fastest)**
-```sql
-SELECT DISTINCT ON (agent_id)
-    bucket, agent_name, agent_type, avg_cpu,
-    avg_memory, max_port_scan_score, max_exfil_score
-FROM rihno_metrics_1min
-WHERE email = 'user@example.com'
-  AND bucket > NOW() - INTERVAL '1 hour'
-ORDER BY agent_id, bucket DESC;
-```
-→ **See:** SQL_QUERIES_GUIDE.md § 9.1
+**Network Map Summary (5 columns):**
+- `total_incoming_connections` - Inbound connections
+- `total_outgoing_connections` - Outbound connections
+- `unique_incoming_ips` - Unique remote IPs connecting in
+- `unique_outgoing_ips` - Unique remote IPs connected to
+- `local_ips_count` - Number of local IPs on the device
 
-### **Incident Timeline**
-```sql
--- See PRACTICAL_SQL_EXAMPLES.md § 6.1 for full timeline
--- Combines metrics, alerts, and connections on one timeline
-```
+#### Use Cases
+- Real-time system health monitoring
+- Trend analysis over hours/days
+- Anomaly detection (spikes in CPU, memory, connections)
+- Security investigation (find unusual network behavior)
+- Performance baselines
 
 ---
 
-## 📊 WHAT THESE 99 METRICS TRACK
+### 2. **rihno_network_maps** (Network Topology Snapshots)
+**Type:** TimescaleDB Hypertable  
+**Retention:** 7 days  
+**Data Frequency:** Every 10 seconds per agent
 
-### **System Health (18 columns)**
-- CPU usage (overall and per-core)
-- Memory usage (used, available, total, percentage)
-- Swap usage (if enabled)
-- Process count and process resources
+#### Purpose
+Stores the complete network topology snapshot as JSON. Contains all active connections with full details needed for forensic investigation.
 
-### **Network (29 columns)**
-- Connection counts by state (ESTABLISHED, LISTEN, SYN_SENT, etc.)
-- Network interface stats (bytes, packets, errors, drops)
-- Bandwidth rates (send, receive)
+#### Key Columns
+- `time` - Snapshot timestamp (TIMESTAMPTZ, NOT NULL)
+- `agent_id` - Which agent sent this data (TEXT)
+- `email` - Email of account owner (TEXT)
+- `agent_name` - Agent name (TEXT)
+- `network_map_json` - Complete JSON blob with connections array
 
-### **Security (27 columns)**
-- Port scanning score (0-100, ML)
-- Data exfiltration score (0-100, ML)
-- C2 communication score (0-100, ML)
-- Suspicious ports and processes detected
-- Bandwidth asymmetry
-
-### **IP & Port (13 columns)**
-- Unique source/destination IPs
-- IP address ranges (private, public, external)
-- Port distribution (well-known, ephemeral, suspicious)
-- Port scanning indicators
-
-### **Process (16 columns)**
-- Process count and creation/termination rates
-- High-resource processes
-- Thread counts
-- File descriptor usage
-- Suspicious process names
-
-### **Disk I/O (7 columns)**
-- Read/write bytes and rates
-- Read/write operation counts
-
----
-
-## 🔍 SECURITY INVESTIGATION WORKFLOW
-
-### **Step-by-Step:**
-
-**1. Find the Device**
-```sql
-SELECT agent_id, agent_name, agent_type, last_seen
-FROM rihno_agents WHERE email = 'user@example.com';
+#### JSON Structure
+```json
+{
+  "connections": [
+    {
+      "remote_ip": "192.168.1.100",
+      "remote_port": 443,
+      "local_ip": "10.0.0.50",
+      "local_port": 54321,
+      "protocol": "TCP",
+      "state": "ESTABLISHED",
+      "pid": 1234,
+      "process_name": "chrome.exe",
+      "direction": "outgoing",
+      "is_private": true,
+      "is_loopback": false,
+      "is_suspicious": false
+    }
+  ],
+  "local_ips": ["10.0.0.50", "172.17.0.1"]
+}
 ```
 
-**2. Get Latest Metrics**
-```sql
-SELECT * FROM rihno_metrics
-WHERE agent_name = 'SUSPECT-DEVICE'
-ORDER BY time DESC LIMIT 1;
-```
-
-**3. Check for Alerts**
-```sql
-SELECT * FROM rihno_alerts
-WHERE agent_name = 'SUSPECT-DEVICE'
-  AND time > NOW() - INTERVAL '72 hours'
-ORDER BY severity DESC;
-```
-
-**4. Find Suspicious Connections**
-```sql
-SELECT * FROM rihno_connections
-WHERE agent_name = 'SUSPECT-DEVICE'
-  AND is_suspicious = TRUE
-  AND time > NOW() - INTERVAL '72 hours';
-```
-
-**5. Extract Full Network Map**
-```sql
-SELECT network_map_json FROM rihno_network_maps
-WHERE agent_name = 'SUSPECT-DEVICE'
-ORDER BY time DESC LIMIT 5;
-```
-
-**6. Create Timeline**
-→ See PRACTICAL_SQL_EXAMPLES.md § 6.1
+#### Use Cases
+- Deep forensic investigation of specific time window
+- Network reconstruction for incident response
+- Process-to-connection mapping analysis
+- Export for external security tools
 
 ---
 
-## ⚡ PERFORMANCE TIPS
+### 3. **rihno_connections** (Individual Connection Records)
+**Type:** TimescaleDB Hypertable  
+**Retention:** 7 days  
+**Data Frequency:** One row per connection per interval
 
-### **Fast Queries:**
-✅ Use `rihno_metrics_1min` or `rihno_metrics_1hr` for trends (100x faster)
-✅ Always include time filter: `time > NOW() - INTERVAL '24 hours'`
-✅ Use `agent_id` instead of `agent_name` if you know it
-✅ Filter by email/type early to reduce row count
+#### Purpose
+Denormalized connection table for fast queries. Each row is a single TCP/UDP connection observed by the agent. Enables queries like "all connections to port 4444" or "all suspicious connections".
 
-### **Slow Queries:**
-❌ Full table scans without time filter
-❌ Querying raw `rihno_metrics` for 90+ days of data
-❌ Multiple JOINs without proper WHERE clauses
-❌ Using OR conditions without indexes
+#### Key Columns
+- `time` - When this connection was observed (TIMESTAMPTZ)
+- `agent_id` - Source agent (TEXT)
+- `agent_name` - Agent name (TEXT)
+- `remote_ip` - Remote/destination IP (TEXT)
+- `remote_port` - Remote port number (INTEGER)
+- `local_ip` - Local/source IP (TEXT)
+- `local_port` - Local port number (INTEGER)
+- `protocol` - TCP or UDP (TEXT)
+- `state` - Connection state (ESTABLISHED, LISTEN, SYN_SENT, etc.)
+- `pid` - Process ID owning the connection (INTEGER)
+- `process_name` - Name of the process (TEXT)
+- `direction` - "incoming" or "outgoing" (TEXT)
+- `is_private` - True if remote IP is in private range (BOOLEAN)
+- `is_loopback` - True if connection is to localhost (BOOLEAN)
+- `is_suspicious` - True if port is known-malicious (BOOLEAN)
 
----
-
-## 🎓 LEARNING PATH
-
-1. **First Time?** → Start with QUICK_REFERENCE.md
-2. **Need to understand structure?** → Read SCHEMA_EXPLANATION.md
-3. **Have a specific query need?** → Jump to SQL_QUERIES_GUIDE.md
-4. **Solving real problems?** → Use PRACTICAL_SQL_EXAMPLES.md
-5. **Stuck on performance?** → Check performance tips sections
-6. **New query type?** → Use QUICK_REFERENCE.md templates
-
----
-
-## 📋 FILE MANIFEST
-
-```
-outputs/
-├── main.go                          [FIXED CODE] ← Deploy this
-├── BUG_FIX_SUMMARY.md              [1 page] What was broken, what's fixed
-├── SCHEMA_EXPLANATION.md           [8 pages] All tables + all columns explained
-├── SQL_QUERIES_GUIDE.md            [15 pages] 40+ ready-to-use queries
-├── PRACTICAL_SQL_EXAMPLES.md       [12 pages] Real-world scenarios & combinations
-├── QUICK_REFERENCE.md              [8 pages] Quick lookup guide
-└── THIS FILE (SUMMARY)
-```
-
-**Total:** ~50 pages of comprehensive documentation
+#### Use Cases
+- Find all connections to a specific IP
+- List all suspicious port connections
+- Identify compromised processes
+- Network forensics for specific time periods
+- Process behavior analysis
 
 ---
 
-## 🔧 DEPLOYMENT CHECKLIST
+### 4. **rihno_alerts** (Security Alerts)
+**Type:** TimescaleDB Hypertable  
+**Retention:** 90 days  
+**Data Frequency:** Only when thresholds are crossed
 
-- [ ] **Review BUG_FIX_SUMMARY.md** to understand the fix
-- [ ] **Backup your current main.go** just in case
-- [ ] **Deploy the fixed main.go** from outputs
-- [ ] **Test with a single metric insert** to verify fix
-- [ ] **Check database logs** for any errors
-- [ ] **Bookmark QUICK_REFERENCE.md** for future queries
-- [ ] **Share SCHEMA_EXPLANATION.md** with your team
+#### Purpose
+Records security alerts generated when metrics exceed thresholds. Examples: CPU >95%, suspicious ports detected, port scanning detected, C2 beaconing, data exfiltration.
 
----
+#### Key Columns
+- `id` - Auto-incrementing alert ID (BIGSERIAL)
+- `time` - When alert was triggered (TIMESTAMPTZ, default NOW())
+- `agent_id` - Source agent (TEXT)
+- `agent_name` - Agent name (TEXT)
+- `email` - Account email (TEXT)
+- `alert_type` - Type of alert (HIGH_CPU, SUSPICIOUS_PORTS, PORT_SCAN, DATA_EXFILTRATION, C2_COMMUNICATION, etc.)
+- `severity` - Alert level: "low", "medium", "high", "critical" (TEXT)
+- `description` - Human-readable alert message (TEXT)
+- `metric_name` - Which metric triggered it (system_cpu, port_scanning_score, etc.)
+- `metric_value` - Actual value that triggered alert (DOUBLE PRECISION)
+- `threshold` - Threshold that was exceeded (DOUBLE PRECISION)
+- `acknowledged` - Whether analyst has reviewed it (BOOLEAN)
+- `resolved` - Whether the issue is fixed (BOOLEAN)
+- `resolved_at` - When it was resolved (TIMESTAMPTZ)
 
-## 📞 COMMON QUESTIONS
+#### Alert Types (from main.go)
+- `HIGH_CPU` - System CPU > 95%
+- `HIGH_MEMORY` - Memory usage > 95%
+- `SUSPICIOUS_PORTS` - Connections on malware ports
+- `SUSPICIOUS_PROCESSES` - Known malware process names
+- `PORT_SCAN` - Port scanning score > 50
+- `DATA_EXFILTRATION` - Data exfil score > 50
+- `C2_COMMUNICATION` - C2 communication score > 70
+- `HIGH_CONN_CHURN` - Connection churn > 0.8
+- `SYN_FLOOD` - SYN_SENT connections > 100
+- `HIGH_FAILED_CONNECTIONS` - Failed connection ratio > 0.5
 
-**Q: Can I use these queries right away?**
-A: Yes! All queries in SQL_QUERIES_GUIDE.md and PRACTICAL_SQL_EXAMPLES.md are ready to run. Just adjust email/agent_name/agent_type as needed.
-
-**Q: Which table should I query most?**
-A:
-- For trends: `rihno_metrics_1min` (fast) or `rihno_metrics_1hr` (fastest)
-- For raw data: `rihno_metrics` (slowest but detailed)
-- For network details: `rihno_connections` or `rihno_network_maps`
-- For alerts: `rihno_alerts`
-
-**Q: How long is data kept?**
-A:
-- Raw metrics: 30 days (then archived to aggregates)
-- Connections: 7 days
-- Network maps: 7 days
-- Alerts: 90 days
-- Aggregates: 1 year
-
-**Q: What if my query is too slow?**
-A: See "Performance Tips" section in QUICK_REFERENCE.md and SQL_QUERIES_GUIDE.md
-
-**Q: Can I export this data?**
-A: Yes! See SQL_QUERIES_GUIDE.md § 11 for CSV and JSON export examples
-
----
-
-## 📈 KEY METRICS FOR SECURITY
-
-The most important metrics to monitor:
-
-| Metric | What It Means | Alert Threshold |
-|--------|---------------|-----------------|
-| `port_scanning_score` | Probability of port scanning | > 50 |
-| `data_exfiltration_score` | Probability of data theft | > 50 |
-| `c2_communication_score` | Probability of C2 beaconing | > 70 |
-| `suspicious_port_connections` | Connections on malware ports | > 0 |
-| `suspicious_process_names` | Known malware processes | > 0 |
-| `bandwidth_asymmetry` | Imbalanced send/receive (0-1) | > 0.8 |
-| `connection_churn_rate` | Connection creation/termination | > 0.8 |
+#### Use Cases
+- Alert dashboard and incident tracking
+- Trend analysis of alerts over time
+- Agent health status
+- Security incident investigation
+- SLA/compliance reporting
 
 ---
 
-## 🎯 Next Steps
+### 5. **rihno_agents** (Agent Registry)
+**Type:** Regular PostgreSQL Table (NOT a hypertable)  
+**Retention:** Forever (one row per agent)  
+**Update Frequency:** On each agent heartbeat
 
-1. **Deploy the fix** - Replace your main.go with the corrected version
-2. **Test the fix** - Send a metric from an agent, verify no error
-3. **Explore your data** - Run some queries from SQL_QUERIES_GUIDE.md
-4. **Bookmark references** - Keep QUICK_REFERENCE.md and SQL_QUERIES_GUIDE.md handy
-5. **Adapt examples** - Copy queries from PRACTICAL_SQL_EXAMPLES.md and modify for your needs
-6. **Share with team** - Distribute SCHEMA_EXPLANATION.md to your team
+#### Purpose
+Tracks metadata about each agent. Single source of truth for agent information. Updated via UPSERT on every metrics transmission.
 
----
+#### Key Columns
+- `agent_id` - Unique agent identifier (TEXT, PRIMARY KEY)
+- `agent_name` - Human-friendly name (TEXT)
+- `agent_type` - Type of agent: "server", "workstation", "cloud", etc. (TEXT)
+- `email` - Owner's email address (TEXT)
+- `first_seen` - When agent first connected (TIMESTAMPTZ, default NOW())
+- `last_seen` - When agent last sent data (TIMESTAMPTZ, default NOW())
+- `is_active` - Currently active/alive (BOOLEAN, default TRUE)
+- `os_info` - Operating system info (TEXT)
+- `ip_address` - Last known IP address (TEXT)
 
-## 📝 Notes
-
-- All timestamps in database are UTC (TIMESTAMPTZ)
-- Security scores are ML-generated (0-100 scale), good indicators but not 100% reliable
-- Email and agent_name are case-sensitive in SQL WHERE clauses
-- Data is automatically compressed after 2 days but remains fully queryable
-- Use time filters in all queries for better performance
-- Aggregates (1min, 1hr) are pre-computed by TimescaleDB automatically
-
----
-
-## ✅ Summary
-
-You now have:
-- ✅ **Fixed Code** - main.go ready to deploy
-- ✅ **Complete Documentation** - 5 comprehensive guides
-- ✅ **40+ SQL Queries** - Copy-paste ready
-- ✅ **Real-World Examples** - 7 practical scenarios
-- ✅ **Quick Reference** - One-page lookup guide
-- ✅ **Schema Explanation** - Every column explained
-
-**Total Value:** Comprehensive understanding of RIHNO database + 40+ production-ready queries + incident investigation toolkit
+#### Use Cases
+- Agent health status and availability
+- Agent discovery and inventory
+- Filtering metrics by organization/email
+- Agent lifecycle management
+- Last-seen monitoring
 
 ---
 
-**Created:** February 2026  
-**Version:** 1.0  
-**Database:** RIHNO with TimescaleDB  
-**Status:** Ready for Production Use
+### 6. **rihno_metrics_1min** (1-Minute Aggregation)
+**Type:** TimescaleDB Materialized Continuous Aggregate View  
+**Retention:** 7 days  
+**Auto-Refresh:** Every 1 minute
+
+#### Purpose
+Pre-computed 1-minute averages and maximums of key metrics. Much faster than raw metrics for dashboards and real-time monitoring. Automatically maintained by TimescaleDB.
+
+#### Key Columns
+- `bucket` - 1-minute time bucket
+- `agent_id` - Agent identifier
+- `agent_name` - Agent name
+- `email` - Owner email
+- `avg_cpu`, `max_cpu` - CPU statistics
+- `avg_memory`, `max_memory` - Memory statistics
+- `avg_connections`, `max_connections` - Connection counts
+- `total_suspicious_ports` - Count of suspicious port connections in the minute
+- `total_suspicious_processes` - Count of suspicious process detections
+- `avg_net_send_rate`, `avg_net_recv_rate` - Network speeds
+- `max_port_scan_score` - Highest port scanning score in minute
+- `max_exfil_score` - Highest data exfiltration score
+- `max_c2_score` - Highest C2 score
+- `avg_churn_rate` - Average connection churn
+- `avg_bandwidth_asymmetry` - Average traffic imbalance
+- `avg_process_count`, `max_process_count` - Process counts
+- `avg_disk_io_rate` - Disk I/O statistics
+
+#### Use Cases
+- Real-time dashboards
+- 1-minute granularity trending
+- Alert dashboard (faster queries)
+- SLA monitoring
+- Quick incident detection
+
+---
+
+### 7. **rihno_metrics_1hr** (1-Hour Aggregation)
+**Type:** TimescaleDB Materialized Continuous Aggregate View  
+**Retention:** 365 days  
+**Auto-Refresh:** Every 1 hour
+
+#### Purpose
+Pre-computed hourly statistics. Longest retention for historical analysis and trend reporting. Enables yearly trend analysis.
+
+#### Key Columns (Similar to 1min view, but includes):
+- `bucket` - 1-hour time bucket
+- `min_cpu` - Minimum CPU in the hour (not in 1min view)
+- `sample_count` - Number of raw samples aggregated
+- All other columns same as 1min view
+
+#### Use Cases
+- Historical trend analysis
+- Week/month/year trend reports
+- Capacity planning
+- Long-term performance baselines
+- Cost/efficiency analysis
+
+---
+
+## INDEXES
+
+### Hypertable Indexes (Time-Series Optimized)
+
+**Metrics Table:**
+- `idx_metrics_agent_id` - Lookup by agent (agent_id, time DESC)
+- `idx_metrics_email` - Lookup by email (email, time DESC)
+- `idx_metrics_agent_name` - Lookup by agent name (agent_name, time DESC)
+- `idx_metrics_suspicious` - Partial: only rows with suspicious activity
+- `idx_metrics_high_cpu` - Partial: only rows with CPU > 90%
+
+**Connections Table:**
+- `idx_conn_agent` - Lookup connections by agent
+- `idx_conn_remote_ip` - Find all connections to/from an IP
+- `idx_conn_suspicious` - Partial: suspicious connections only
+- `idx_conn_direction` - Filter by incoming/outgoing
+
+**Alerts Table:**
+- `idx_alerts_agent` - Lookup alerts by agent
+- `idx_alerts_severity` - Filter by alert severity
+- `idx_alerts_unresolved` - Partial: unresolved alerts only
+
+**Network Maps Table:**
+- `idx_netmap_agent` - Lookup network maps by agent
+
+**Agents Table:**
+- `idx_agents_email` - Find agents by email
+- `idx_agents_active` - Find active/inactive agents
+
+---
+
+## COMPRESSION & RETENTION
+
+The database automatically manages data lifecycle:
+
+| Table | Raw Retention | Aggregation | Compression |
+|-------|---------------|-------------|-------------|
+| rihno_metrics | 30 days | → 1min (7d), 1hr (365d) | After 2 days |
+| rihno_network_maps | 7 days | - | After 2 days |
+| rihno_connections | 7 days | - | After 2 days |
+| rihno_alerts | 90 days | - | - |
+| rihno_agents | Forever | - | - |
+
+Compression achieves 10-20x space savings while keeping data queryable.
