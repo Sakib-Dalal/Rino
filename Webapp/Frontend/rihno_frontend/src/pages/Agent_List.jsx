@@ -4,6 +4,7 @@ import axios from 'axios';
 import {Loader2, MapPin, Cpu, Calendar, Search, Filter, Activity, LineChart} from 'lucide-react';
 import { backendConfig } from "../authConfig.js";
 import { PieChart, Pie, Tooltip, Cell } from 'recharts';
+import {useNavigate} from "react-router-dom";
 
 const Agent_List = () => {
     const auth = useAuth();
@@ -42,13 +43,30 @@ const Agent_List = () => {
     });
 
     // Pie chart data
-    const data = [
+    const data_01 = [
         { name: "CPU Available", value: 10 },
         { name: "CPU Used", value: 90 }
     ];
+    const data_02 = [
+        { name: "Memory Available", value: 25 },
+        { name: "Memory Used", value: 75 }
+    ];
+    const data_03 = [
+        { name: "Network Available", value: 40 },
+        { name: "Network Used", value: 60 }
+    ];
 
     // Pie chart Colors
-    const COLORS = ["#F7B980", "#5A7ACD"];
+    const COLORS_01 = ["#F7B980", "#5A7ACD"];
+    const COLORS_02 = ["#94A378", "#2D3C59"];
+    const COLORS_03 = ["#ACBAC4", "#E1D9BC"];
+
+    // Analytics dashboard route
+    const navigator = useNavigate();
+    function handleNavigate() {
+        navigator('/dashboard/analytics');
+        window.scrollTo(0, 0);
+    }
 
     return (
         <div className="flex flex-col items-center animate-fade-in w-full p-6 min-h-screen bg-white">
@@ -142,63 +160,78 @@ const Agent_List = () => {
                                 <hr></hr>
 
 
-                                <div className={"flex flex-row justify-evenly"}>
-                                    <PieChart width={200} height={200}>
-                                        <Pie
-                                            data={data}
-                                            dataKey="value"
-                                            cx="50%"
-                                            cy="50%"
-                                            outerRadius="80%"
-                                        >
-                                            {data.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                            ))}
-                                        </Pie>
-                                        <Tooltip/>
-                                    </PieChart>
-                                    <PieChart width={200} height={200}>
-                                        <Pie
-                                            data={data}
-                                            dataKey="value"
-                                            cx="50%"
-                                            cy="50%"
-                                            outerRadius="80%"
-                                        >
-                                            {data.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                            ))}
-                                        </Pie>
-                                        <Tooltip/>
-                                    </PieChart>
-                                    <PieChart width={200} height={200}>
-                                        <Pie
-                                            data={data}
-                                            dataKey="value"
-                                            cx="50%"
-                                            cy="50%"
-                                            outerRadius="80%"
-                                        >
-                                            {data.map((entry, index) => (
-                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                            ))}
-                                        </Pie>
-                                        <Tooltip/>
-                                    </PieChart>
+                                <div className={"flex flex-col justify-evenly sm:items-center sm:flex-row"}>
+                                    <div className={"flex flex-col items-center pb-3 justify-between"}>
+                                        <PieChart width={250} height={250}>
+                                            <Pie
+                                                data={data_01}
+                                                dataKey="value"
+                                                cx="50%"
+                                                cy="50%"
+                                                outerRadius="65%"
+                                                label
+                                            >
+                                                {data_01.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={COLORS_01[index % COLORS_01.length]} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip/>
+                                        </PieChart>
+                                        <h4 className={"font-mono"}>CPU Usage</h4>
+                                    </div>
+
+                                    <div className={"flex flex-col items-center pb-3 justify-between"}>
+                                        <PieChart width={250} height={250}>
+                                            <Pie
+                                                data={data_02}
+                                                dataKey="value"
+                                                cx="50%"
+                                                cy="50%"
+                                                outerRadius="65%"
+                                                label
+                                            >
+                                                {data_02.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={COLORS_02[index % COLORS_02.length]} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip/>
+                                        </PieChart>
+                                        <h4 className={"font-mono"}>Memory Usage</h4>
+                                    </div>
+
+                                    <div className={"flex flex-col items-center pb-3 justify-between"}>
+                                        <PieChart width={250} height={250}>
+                                            <Pie
+                                                data={data_03}
+                                                dataKey="value"
+                                                cx="50%"
+                                                cy="50%"
+                                                outerRadius="65%"
+                                                label
+                                            >
+                                                {data_03.map((entry, index) => (
+                                                    <Cell key={`cell-${index}`} fill={COLORS_03[index % COLORS_03.length]} />
+                                                ))}
+                                            </Pie>
+                                            <Tooltip/>
+                                        </PieChart>
+                                        <h4 className={"font-mono"}>Network Usage</h4>
+                                    </div>
                                 </div>
 
                                 <hr></hr>
 
                                 {/* View More Analytics Button */}
-                                <div className={"flex flex-col sm:flex-row sm:items-center justify-end mt-5 bg-white font-mono"}>
+                                <div className={"flex flex-col mt-5 bg-white font-mono border-1 hover:border-0 rounded-4xl"}>
 
                                     <button
-                                        className={"flex flex-row justify-between border-2 p-1 uppercase duration-200 ease-in-out bg-transparent text-black border-transparent hover:bg-[#7EA0FD] hover:text-white hover:border-black hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"}
+                                        className={"flex flex-row justify-center border-2 p-1 uppercase duration-200 ease-in-out bg-transparent text-black border-transparent hover:bg-[#EA7B7B] hover:text-white hover:border-black hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:rounded-4xl"}
                                         onClick={() => {
+                                            handleNavigate()
                                         }}
                                     >
                                         <LineChart size={24} />
-                                        <br></br>
+                                        <span className={"mx-3"}></span>
                                         View More Analytics
                                     </button>
                                 </div>
