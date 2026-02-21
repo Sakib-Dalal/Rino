@@ -3,6 +3,7 @@ import { useAuth } from "react-oidc-context";
 import axios from 'axios';
 import {Loader2, MapPin, Cpu, Calendar, Search, Filter, Activity, LineChart} from 'lucide-react';
 import { backendConfig } from "../authConfig.js";
+import { PieChart, Pie, Tooltip, Cell } from 'recharts';
 
 const Agent_List = () => {
     const auth = useAuth();
@@ -39,6 +40,15 @@ const Agent_List = () => {
         const matchesStatus = statusFilter === "All" || server.Status === statusFilter;
         return matchesSearch && matchesStatus;
     });
+
+    // Pie chart data
+    const data = [
+        { name: "CPU Available", value: 10 },
+        { name: "CPU Used", value: 90 }
+    ];
+
+    // Pie chart Colors
+    const COLORS = ["#F7B980", "#5A7ACD"];
 
     return (
         <div className="flex flex-col items-center animate-fade-in w-full p-6 min-h-screen bg-white">
@@ -127,6 +137,54 @@ const Agent_List = () => {
                                         <Calendar size={16} />
                                         <span>Date Created: {server.DateCreated || 'N/A'}</span>
                                     </div>
+                                </div>
+
+                                <hr></hr>
+
+
+                                <div className={"flex flex-row justify-evenly"}>
+                                    <PieChart width={200} height={200}>
+                                        <Pie
+                                            data={data}
+                                            dataKey="value"
+                                            cx="50%"
+                                            cy="50%"
+                                            outerRadius="80%"
+                                        >
+                                            {data.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip/>
+                                    </PieChart>
+                                    <PieChart width={200} height={200}>
+                                        <Pie
+                                            data={data}
+                                            dataKey="value"
+                                            cx="50%"
+                                            cy="50%"
+                                            outerRadius="80%"
+                                        >
+                                            {data.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip/>
+                                    </PieChart>
+                                    <PieChart width={200} height={200}>
+                                        <Pie
+                                            data={data}
+                                            dataKey="value"
+                                            cx="50%"
+                                            cy="50%"
+                                            outerRadius="80%"
+                                        >
+                                            {data.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip/>
+                                    </PieChart>
                                 </div>
 
                                 <hr></hr>
