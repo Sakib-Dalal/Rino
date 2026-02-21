@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "react-oidc-context";
 import axios from 'axios';
-import { Loader2, MapPin, Cpu, Calendar, Search, Filter, Activity } from 'lucide-react';
+import {Loader2, MapPin, Cpu, Calendar, Search, Filter, Activity, LineChart} from 'lucide-react';
 import { backendConfig } from "../authConfig.js";
 
-const Servers = () => {
+const Agent_List = () => {
     const auth = useAuth();
     const [servers, setServers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -46,7 +46,7 @@ const Servers = () => {
             {/* Header Section */}
             <div className="mb-25">
                 <h1 className="text-6xl md:text-8xl font-black uppercase leading-none text-center">
-                    AGENTS
+                    AGENT
                     <span className="block md:inline-block bg-[#FFECA0] border-[4px] border-black px-4 ml-0 md:ml-4 shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
                         LIST
                     </span>
@@ -101,15 +101,20 @@ const Servers = () => {
                                     <h3 className="text-3xl font-black leading-none text-black">
                                         {server.DeviceName}
                                     </h3>
-                                    <span className={`inline-block px-3 py-1 border-2 border-black text-[10px] font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-center w-fit ${
-                                        server.Status === 'Online' ? 'bg-[#CEFFBC] text-black' :
-                                            server.Status === 'Maintenance' ? 'bg-[#7EA0FD] text-white' : 'bg-[#FF6B6B] text-white'
-                                    }`}>
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between">
+                                        <span className={'bg-white p-1 text-center font-mono text-[11px] font-bold text-gray-500 uppercase tracking-tight'}>Agent Status: </span>
+                                        <span className={`inline-block px-3 py-1 border-2 border-black text-[10px] font-black uppercase shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] text-center w-fit ${
+                                            server.Status === 'Online' ? 'bg-[#CEFFBC] text-black' :
+                                                server.Status === 'Maintenance' ? 'bg-[#7EA0FD] text-white' : 'bg-[#FF6B6B] text-white'
+                                        }`}>
+
                                         {server.Status}
                                     </span>
+                                    </div>
+
                                 </div>
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 font-mono text-[11px] font-bold text-gray-500 uppercase tracking-tight">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6 font-mono text-[11px] font-bold text-gray-500 uppercase tracking-tight mb-5">
                                     <div className="flex items-center gap-2 border-l-4 border-black pl-3 text-black">
                                         <MapPin size={16} />
                                         <span>Location: {server.Location || 'N/A'}</span>
@@ -118,10 +123,26 @@ const Servers = () => {
                                         <Cpu size={16} />
                                         <span>Device Type: {server.DeviceType || 'N/A'}</span>
                                     </div>
-                                    <div className="flex items-center gap-2 col-span-full pt-2 mt-2 border-t border-gray-100 text-black">
+                                    <div className="flex items-center gap-2  pt-2 mt-2 border-t border-gray-100 text-black">
                                         <Calendar size={16} />
                                         <span>Date Created: {server.DateCreated || 'N/A'}</span>
                                     </div>
+                                </div>
+
+                                <hr></hr>
+
+                                {/* View More Analytics Button */}
+                                <div className={"flex flex-col sm:flex-row sm:items-center justify-end mt-5 bg-white font-mono"}>
+
+                                    <button
+                                        className={"flex flex-row justify-between border-2 p-1 uppercase duration-200 ease-in-out bg-transparent text-black border-transparent hover:bg-[#7EA0FD] hover:text-white hover:border-black hover:-translate-y-1 hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"}
+                                        onClick={() => {
+                                        }}
+                                    >
+                                        <LineChart size={24} />
+                                        <br></br>
+                                        View More Analytics
+                                    </button>
                                 </div>
                             </div>
                         ))}
@@ -143,4 +164,4 @@ const Servers = () => {
     );
 }
 
-export default Servers;
+export default Agent_List;

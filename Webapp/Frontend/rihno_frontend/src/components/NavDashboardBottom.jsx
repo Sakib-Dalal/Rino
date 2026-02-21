@@ -14,14 +14,14 @@ function NavDashboardBottom() {
             <div className="flex items-center gap-1 md:gap-2 px-3 py-2 bg-white border-[3px] border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
 
                 {/* Core Section */}
-                <DockIcon to="/dashboard/servers" icon={<Server size={24} />} label="Servers" />
+                <DockIcon to="/dashboard/servers" icon={<Server size={24} />} label="Agents" />
                 <DockIcon to="/dashboard/data" icon={<Database size={24} />} label="Data" />
                 <DockIcon to="/dashboard/activity" icon={<Activity size={24} />} label="Activity" />
 
                 <Separator />
 
                 {/* Analysis Section */}
-                <DockIcon to="/dashboard/analytics" icon={<LineChart size={24} />} label="Analytics" />
+                {/*<DockIcon to="/dashboard/analytics" icon={<LineChart size={24} />} label="Analytics" />*/}
                 <DockIcon to="/dashboard/networkmap" icon={<NetworkIcon size={24} />} label="Network" />
                 <DockIcon to="/dashboard/ai" icon={<Sparkles size={24} />} label="A.I." />
 

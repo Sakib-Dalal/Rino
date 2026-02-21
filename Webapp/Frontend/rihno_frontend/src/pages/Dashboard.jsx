@@ -10,7 +10,7 @@ function Dashboard() {
             {/* TOP NAVBAR */}
             <NavDashboardTop />
 
-            {/* DYNAMIC CONTENT AREA (Servers, Home, etc. load here) */}
+            {/* DYNAMIC CONTENT AREA (Agent_List, Home, etc. load here) */}
             <main className="max-w-7xl mx-auto mt-6">
                 <Outlet />
             </main>

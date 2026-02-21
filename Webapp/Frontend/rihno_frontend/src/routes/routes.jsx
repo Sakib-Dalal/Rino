@@ -10,7 +10,7 @@ import Contact from "../pages/Contact.jsx";
 // Import the new components
 import Dashboard from "../pages/Dashboard.jsx"; // This is your layout file
 import DashboardHome from "../pages/DashboardHome.jsx";
-import Servers from "../pages/Servers.jsx";
+import Agent_List from "../pages/Agent_List.jsx";
 import Data from "../pages/Data.jsx";
 import Activity from "../pages/Activity.jsx";
 import Analytics from "../pages/Analytics.jsx";
@@ -52,7 +52,7 @@ export const router = createBrowserRouter([
                     { index: true, element: <DashboardHome /> },
 
                     // This renders at /dashboard/servers (The Server List)
-                    { path: "servers", element: <Servers /> },
+                    { path: "servers", element: <Agent_List /> },
 
                     // Placeholders for other buttons:
                     { path: "data", element: <Data /> },
