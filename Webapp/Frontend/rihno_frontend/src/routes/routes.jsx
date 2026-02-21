@@ -27,6 +27,7 @@ import ProtectedRoute from "../components/ProtectedRoute.jsx";
 import NewAgents from "../pages/Config_pages/NewAgents.jsx";
 import EditAgent from "../pages/Config_pages/EditAgent.jsx";
 import DeleteAgent from "../pages/Config_pages/DeleteAgent.jsx";
+import TimestampView from "../pages/Analytics_Pages/Timestamp_View.jsx";
 
 export const router = createBrowserRouter([
     {
@@ -57,7 +58,13 @@ export const router = createBrowserRouter([
                     // Placeholders for other buttons:
                     { path: "data", element: <Data /> },
                     { path: "activity", element: <Activity /> },
-                    { path: "analytics", element: <Analytics /> },
+                    {
+                        path: "analytics",
+                        children: [
+                            { index: true, element: <Analytics /> }, // Renders at /dashboard/analytics
+                            { path: "timestamp_view", element: <TimestampView /> } // Renders at /dashboard/analytics/timestamp_view
+                        ]
+                    },
                     { path: "networkmap", element: <NetworkMap /> },
                     { path: "ai", element: <AI /> },
                     { path: "notification", element: <Notification /> },

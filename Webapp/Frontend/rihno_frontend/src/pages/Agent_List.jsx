@@ -168,6 +168,7 @@ const Agent_List = () => {
                                                 dataKey="value"
                                                 cx="50%"
                                                 cy="50%"
+                                                innerRadius={50}
                                                 outerRadius="65%"
                                                 label
                                             >
@@ -187,6 +188,7 @@ const Agent_List = () => {
                                                 dataKey="value"
                                                 cx="50%"
                                                 cy="50%"
+                                                innerRadius={50}
                                                 outerRadius="65%"
                                                 label
                                             >
@@ -206,6 +208,7 @@ const Agent_List = () => {
                                                 dataKey="value"
                                                 cx="50%"
                                                 cy="50%"
+                                                innerRadius={50}
                                                 outerRadius="65%"
                                                 label
                                             >
