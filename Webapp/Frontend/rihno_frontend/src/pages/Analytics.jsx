@@ -83,10 +83,12 @@ function Analytics() {
                         </div>
 
                         <hr></hr>
-                        <div className={"flex flex-row justify-center items-end m-4 gap-2 font-mono border border-white p-1 text-black hover:border-black hover:text-white bg-white hover:bg-black"}>
+                        <Link to='/dashboard/analytics/timestamp_view'
+                              className={"flex flex-row justify-center items-end m-4 gap-2 font-mono border border-white p-1 text-black hover:border-black hover:text-white bg-white hover:bg-black"}
+                        >
                             <Calendar />
                             View More
-                        </div>
+                        </Link>
 
                     </div>
 
@@ -128,10 +130,12 @@ function Analytics() {
                         </div>
 
                         <hr></hr>
-                        <div className={"flex flex-row justify-center items-end m-4 gap-2 font-mono border border-white p-1 text-black hover:border-black hover:text-white bg-white hover:bg-black"}>
+                        <Link to='/dashboard/analytics/timestamp_view'
+                              className={"flex flex-row justify-center items-end m-4 gap-2 font-mono border border-white p-1 text-black hover:border-black hover:text-white bg-white hover:bg-black"}
+                        >
                             <Calendar />
                             View More
-                        </div>
+                        </Link>
                     </div>
 
                     {/* CARD 3 */}
@@ -172,10 +176,12 @@ function Analytics() {
                         </div>
 
                         <hr></hr>
-                        <div className={"flex flex-row justify-center items-end m-4 gap-2 font-mono border border-white p-1 text-black hover:border-black hover:text-white bg-white hover:bg-black"}>
+                        <Link to='/dashboard/analytics/timestamp_view'
+                              className={"flex flex-row justify-center items-end m-4 gap-2 font-mono border border-white p-1 text-black hover:border-black hover:text-white bg-white hover:bg-black"}
+                        >
                             <Calendar />
                             View More
-                        </div>
+                        </Link>
                     </div>
 
                     {/* CARD 4 */}
